@@ -242,7 +242,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const produtosAtivos = Array.isArray(body.produtosAtivos)
+    const produtosAtivos: number[] = Array.isArray(body.produtosAtivos)
       ? body.produtosAtivos
           .map((item: unknown) => Number(item))
           .filter(

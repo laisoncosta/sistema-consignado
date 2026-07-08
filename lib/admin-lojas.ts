@@ -13,9 +13,7 @@ import {
 } from "@/lib/cerca-virtual";
 
 export type {
-  FiltroCardLojas,
   FiltroRegiaoProduto,
-  FiltroStatusLoja,
   RegiaoCatalogo,
   StatusCercaVirtualLoja,
 };

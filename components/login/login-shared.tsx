@@ -166,7 +166,7 @@ export function LoginSuccessBox({ message }: { message: string }) {
 }
 
 export function criarInputRingStyle(brand: BrandTheme): CSSProperties {
-  return { "--tw-ring-color": brand.primary };
+  return { "--tw-ring-color": brand.primary } as CSSProperties;
 }
 
 export type AuthView =

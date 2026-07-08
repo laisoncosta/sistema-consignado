@@ -84,6 +84,9 @@ export function registrarPedidoNoHistoricoLocal(params: {
       avarias,
       trocasSolicitadas: trocas,
       corteTroca: 0,
+      qtdeTransf: 0,
+      bonificacao: 0,
+      motivo: "",
     };
   }).filter(
     (item) =>

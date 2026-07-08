@@ -361,7 +361,14 @@ export async function POST(request: Request) {
       where: { regiaoId, ativo: true },
     });
 
-    const itensCreate = [];
+    const itensCreate: Array<{
+      produtoId: number;
+      estoque: number;
+      avaria: number;
+      trocas: number;
+      pedidoSolicitado: number;
+      status: string;
+    }> = [];
     const produtosIncluidos = new Set<number>();
 
     for (const linha of linhas) {

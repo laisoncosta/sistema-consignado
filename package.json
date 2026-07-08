@@ -12,7 +12,8 @@
     "reset-senha:usuario": "npx tsx prisma/reset-senha-usuario.ts",
     "sync:senhas-padrao": "npx tsx prisma/sincronizar-senhas-padrao.ts",
     "regeocodificar:lojas": "npx tsx prisma/regeocodificar-lojas.ts",
-    "seed:loja-produtos": "npx tsx prisma/seed-loja-produtos.ts"
+    "seed:loja-produtos": "npx tsx prisma/seed-loja-produtos.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.8.0",

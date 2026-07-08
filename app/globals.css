@@ -1,0 +1,373 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --surface-elevated: #f1f5f9;
+  --surface-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --border-muted: #f1f5f9;
+  --muted: #64748b;
+  --viva-green: #499f4d;
+  --buriti-red: #c8102e;
+  --font-poppins: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-inter: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0b1220;
+  --foreground: #e2e8f0;
+  --surface: #111827;
+  --surface-muted: #0f172a;
+  --surface-elevated: #1e293b;
+  --surface-hover: #1e293b;
+  --border: #334155;
+  --border-muted: #1e293b;
+  --muted: #94a3b8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-viva: var(--viva-green);
+  --color-buriti: var(--buriti-red);
+  --font-sans: var(--font-poppins), var(--font-inter), sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), var(--font-inter), sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Evita ícone nativo do navegador duplicar o botão "Ver senha" no login */
+.campo-senha-app input[type="password"]::-ms-reveal,
+.campo-senha-app input[type="password"]::-ms-clear {
+  display: none;
+}
+
+.campo-senha-app input[type="password"]::-webkit-credentials-auto-fill-button,
+.campo-senha-app input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/*
+ * Modo escuro global — !important para vencer utilitários Tailwind.
+ * Adapta cards, tabelas, inputs, modais e tipografia em todas as telas.
+ */
+.dark .bg-white {
+  background-color: var(--surface) !important;
+}
+
+.dark .bg-white\/90 {
+  background-color: color-mix(in srgb, var(--surface) 92%, transparent) !important;
+}
+
+.dark .bg-white\/80 {
+  background-color: color-mix(in srgb, var(--surface) 84%, transparent) !important;
+}
+
+.dark .bg-white\/70 {
+  background-color: color-mix(in srgb, var(--surface) 76%, transparent) !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: var(--surface-muted) !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: var(--surface-elevated) !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+.dark .hover\:bg-slate-50\/80:hover,
+.dark .hover\:bg-slate-50\/50:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+.dark .hover\:bg-slate-100:hover {
+  background-color: #334155 !important;
+}
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: var(--border) !important;
+}
+
+.dark .border-dashed.border-slate-300 {
+  border-color: #475569 !important;
+}
+
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border) !important;
+}
+
+.dark .text-slate-900 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-slate-800 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-400 {
+  color: #64748b !important;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-2xl {
+  --tw-shadow-color: rgb(0 0 0 / 0.5) !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgb(6 78 59 / 0.28) !important;
+}
+
+.dark .bg-emerald-100 {
+  background-color: rgb(6 78 59 / 0.38) !important;
+}
+
+.dark .bg-rose-50 {
+  background-color: rgb(127 29 29 / 0.28) !important;
+}
+
+.dark .bg-rose-100 {
+  background-color: rgb(127 29 29 / 0.38) !important;
+}
+
+.dark .bg-red-50 {
+  background-color: rgb(127 29 29 / 0.28) !important;
+}
+
+.dark .bg-amber-50 {
+  background-color: rgb(120 53 15 / 0.28) !important;
+}
+
+.dark .bg-sky-50 {
+  background-color: rgb(12 74 110 / 0.28) !important;
+}
+
+.dark .border-emerald-200 {
+  border-color: rgb(16 185 129 / 0.4) !important;
+}
+
+.dark .border-rose-200,
+.dark .border-red-200 {
+  border-color: rgb(244 63 94 / 0.4) !important;
+}
+
+.dark .border-amber-200,
+.dark .border-amber-300 {
+  border-color: rgb(245 158 11 / 0.4) !important;
+}
+
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+  color: #6ee7b7 !important;
+}
+
+.dark .text-rose-700,
+.dark .text-rose-800 {
+  color: #fda4af !important;
+}
+
+.dark .text-red-700,
+.dark .text-red-800 {
+  color: #fca5a5 !important;
+}
+
+.dark .text-amber-700 {
+  color: #fcd34d !important;
+}
+
+.dark thead.bg-slate-50,
+.dark .sticky.bg-slate-50 {
+  background-color: var(--surface-muted) !important;
+}
+
+.dark .bg-rose-50\/40,
+.dark .bg-rose-50\/70,
+.dark .hover\:bg-rose-50\/70:hover {
+  background-color: rgb(127 29 29 / 0.18) !important;
+}
+
+.dark .ring-slate-200 {
+  --tw-ring-color: #475569 !important;
+}
+
+.dark .apexcharts-canvas,
+.dark .apexcharts-svg {
+  background: transparent !important;
+}
+
+.dark .apexcharts-text,
+.dark .apexcharts-title-text {
+  fill: #94a3b8 !important;
+}
+
+.dark .apexcharts-gridline,
+.dark .apexcharts-xaxis-tick,
+.dark .apexcharts-yaxis-tick {
+  stroke: #334155 !important;
+}
+
+.dark .apexcharts-tooltip.apexcharts-theme-light {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .apexcharts-legend-text {
+  color: #94a3b8 !important;
+}
+
+.dark .apexcharts-toolbar svg {
+  fill: #94a3b8 !important;
+}
+
+.dark ::-webkit-calendar-picker-indicator {
+  filter: invert(0.85);
+}
+
+.dark option {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+.dark .bg-gray-50 {
+  background-color: var(--surface-muted) !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: var(--surface-elevated) !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: #334155 !important;
+}
+
+.dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .border-gray-200 {
+  border-color: var(--border) !important;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: #334155 !important;
+}
+
+.dark .text-amber-900 {
+  color: #fde68a !important;
+}
+
+.dark .border-amber-300.bg-amber-50 {
+  background-color: rgb(120 53 15 / 0.35) !important;
+  border-color: rgb(245 158 11 / 0.45) !important;
+}
+
+/*
+ * Login: sempre aparência clara, mesmo com .dark no html.
+ */
+.dark .login-isolado {
+  color-scheme: light;
+}
+
+.dark .login-isolado .bg-white\/85 {
+  background-color: rgb(255 255 255 / 0.85) !important;
+}
+
+.dark .login-isolado .bg-white\/70 {
+  background-color: rgb(255 255 255 / 0.7) !important;
+}
+
+.dark .login-isolado .bg-white\/60 {
+  background-color: rgb(255 255 255 / 0.6) !important;
+}
+
+.dark .login-isolado .bg-white\/90 {
+  background-color: rgb(255 255 255 / 0.9) !important;
+}
+
+.dark .login-isolado .bg-slate-100\/80 {
+  background-color: rgb(241 245 249 / 0.8) !important;
+}
+
+.dark .login-isolado .text-slate-800 {
+  color: #1e293b !important;
+}
+
+.dark .login-isolado .text-slate-700 {
+  color: #334155 !important;
+}
+
+.dark .login-isolado .text-slate-600 {
+  color: #475569 !important;
+}
+
+.dark .login-isolado .text-slate-500 {
+  color: #64748b !important;
+}
+
+.dark .login-isolado .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.dark .login-isolado input:not([type="checkbox"]):not([type="radio"]) {
+  background-color: rgb(255 255 255 / 0.7) !important;
+  color: #1e293b !important;
+  border-color: rgb(226 232 240 / 0.8) !important;
+}
+
+.dark .login-isolado input::placeholder {
+  color: #94a3b8 !important;
+}

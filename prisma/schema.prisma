@@ -1,0 +1,274 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Regiao {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  createdAt DateTime  @default(now())
+  produtos  Produto[]
+  lojas     Loja[]
+  usuarios  Usuario[]
+  usuariosComAcesso UsuarioRegiao[]
+  origens   Origem[]
+  pedidos   Pedido[]
+}
+
+model Produto {
+  id            Int      @id @default(autoincrement())
+  codigo        String
+  descricao     String
+  precoUnitario Decimal  @default(0) @db.Decimal(10, 2)
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  regiaoId      Int
+  regiao        Regiao   @relation(fields: [regiaoId], references: [id])
+  itensPedido ItemPedido[]
+  transferenciasAvulsas TransferenciaAvulsa[]
+  lojasVinculadas LojaProduto[]
+}
+
+model Loja {
+  id        Int      @id @default(autoincrement())
+  codigo    String
+  nome      String
+  ativo     Boolean  @default(true)
+  cep       String?
+  rua       String?
+  numero    String?
+  bairro    String?
+  cidade    String?
+  latitude  Float?
+  longitude Float?
+  cercaVirtualAtiva Boolean @default(false)
+  perimetroCerca    Int     @default(0)
+  createdAt DateTime @default(now())
+  regiaoId  Int
+  regiao    Regiao   @relation(fields: [regiaoId], references: [id])
+  pedidos   Pedido[]
+  transferenciasAvulsas TransferenciaAvulsa[]
+  logsCheckIn LogCheckIn[]
+  promotoresVinculados UsuarioLoja[]
+  produtosVinculados LojaProduto[]
+}
+
+model LojaProduto {
+  id        Int     @id @default(autoincrement())
+  lojaId    Int
+  produtoId Int
+  ativo     Boolean @default(true)
+  loja      Loja    @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+  produto   Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@unique([lojaId, produtoId])
+}
+
+model Usuario {
+  id          Int      @id @default(autoincrement())
+  nome        String
+  usuario     String
+  senha       String
+  funcao      String
+  genero      String   @default("M")
+  telefone    String?
+  codCiss     String?
+  clt         Boolean  @default(false)
+  cercaVirtualAtiva Boolean @default(false)
+  deviceId            String?
+  ignorarTravaAparelho Boolean @default(false)
+  statusConta String   @default("Ativo")
+  ativo       Boolean  @default(true)
+  alterarSenhaObrigatorio Boolean @default(false)
+  createdAt   DateTime @default(now())
+  regiaoId    Int
+  regiao      Regiao   @relation(fields: [regiaoId], references: [id])
+  pedidos   Pedido[] @relation("PedidosCriados")
+  pedidosExcluidos Pedido[] @relation("PedidosExcluidos")
+  logsAuditoria LogAuditoria[]
+  logsCheckIn LogCheckIn[]
+  controlesPedidoLojaDia ControlePedidoLojaDia[]
+  lojasVinculadas UsuarioLoja[]
+  regioesAcesso UsuarioRegiao[]
+  logsPedidoExpedicao LogPedidoExpedicao[]
+  tokensRecuperacaoSenha TokenRecuperacaoSenha[]
+}
+
+model TokenRecuperacaoSenha {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique
+  usuarioId Int
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([usuarioId])
+  @@index([expiresAt])
+}
+
+model UsuarioRegiao {
+  id        Int     @id @default(autoincrement())
+  usuarioId Int
+  regiaoId  Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  regiao    Regiao  @relation(fields: [regiaoId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, regiaoId])
+}
+
+model UsuarioLoja {
+  id        Int     @id @default(autoincrement())
+  usuarioId Int
+  lojaId    Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  loja      Loja    @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, lojaId])
+}
+
+model Pedido {
+  id                  Int           @id @default(autoincrement())
+  numeroAmigavel      Int           @unique
+  status              String        @default("AGUARDANDO_APROVACAO")
+  tipoLancamento      String        @default("principal")
+  createdAt           DateTime      @default(now())
+  inicioVisitaEm      DateTime?
+  latitudeEnvio       Float?
+  longitudeEnvio      Float?
+  distanciaLojaMetros Float?
+  motivoExclusao      String?
+  excluidoEm          DateTime?
+  excluidoPorId       Int?
+  excluidoPor         Usuario?      @relation("PedidosExcluidos", fields: [excluidoPorId], references: [id], onDelete: SetNull)
+  usuarioId Int
+  usuario   Usuario       @relation("PedidosCriados", fields: [usuarioId], references: [id])
+  lojaId    Int
+  loja      Loja          @relation(fields: [lojaId], references: [id])
+  regiaoId  Int
+  regiao    Regiao        @relation(fields: [regiaoId], references: [id])
+  itens     ItemPedido[]
+
+  @@index([numeroAmigavel])
+  @@index([createdAt])
+  @@index([lojaId])
+  @@index([usuarioId])
+  @@index([status])
+  @@index([regiaoId, createdAt])
+  @@index([lojaId, createdAt])
+  @@index([usuarioId, createdAt])
+}
+
+model ItemPedido {
+  id               Int     @id @default(autoincrement())
+  pedidoId         Int
+  pedido           Pedido  @relation(fields: [pedidoId], references: [id])
+  produtoId        Int
+  produto          Produto @relation(fields: [produtoId], references: [id])
+
+  // Campos preenchidos pelo Promotor
+  estoque          Int
+  avaria           Int
+  trocas           Int
+  pedidoSolicitado Int
+
+  // Campos tratados pela Expedição
+  pedidoAtendido   Int?
+  cortePedido      Int?
+  estoqueConferido Int?
+  corteTroca       Int?
+  trocaAtendida    Int?
+  bonificacao      Int      @default(0)
+  origemSaida      String?
+  origemId         Int?
+  origem           Origem?  @relation(fields: [origemId], references: [id])
+  status           String   @default("PENDENTE")
+  logsExpedicao    LogPedidoExpedicao[]
+
+  @@index([pedidoId])
+  @@index([status])
+  @@index([produtoId])
+}
+
+model Origem {
+  id        Int                  @id @default(autoincrement())
+  nome      String
+  createdAt DateTime             @default(now())
+  regiaoId  Int
+  regiao    Regiao               @relation(fields: [regiaoId], references: [id])
+  transferenciasAvulsas TransferenciaAvulsa[]
+  itensPedido ItemPedido[]
+}
+
+model TransferenciaAvulsa {
+  id          Int      @id @default(autoincrement())
+  quantidade  Int
+  bonificacao Int      @default(0)
+  motivo      String   @default("")
+  data        DateTime @default(now())
+  lojaId      Int
+  loja        Loja     @relation(fields: [lojaId], references: [id])
+  produtoId   Int
+  produto     Produto  @relation(fields: [produtoId], references: [id])
+  origemId    Int
+  origem      Origem   @relation(fields: [origemId], references: [id])
+}
+
+model LogPedidoExpedicao {
+  id           Int        @id @default(autoincrement())
+  itemPedidoId Int
+  itemPedido   ItemPedido @relation(fields: [itemPedidoId], references: [id], onDelete: Cascade)
+  usuarioId    Int
+  usuario      Usuario    @relation(fields: [usuarioId], references: [id])
+  acao         String
+  detalhes     String?
+  createdAt    DateTime   @default(now())
+}
+
+model LogAuditoria {
+  id               Int      @id @default(autoincrement())
+  usuarioId        Int
+  usuario          Usuario  @relation(fields: [usuarioId], references: [id])
+  perfil           String
+  acao             String
+  registroAlterado String
+  valorAnterior    String?
+  valorNovo        String?
+  createdAt        DateTime @default(now())
+}
+
+model LogCheckIn {
+  id                 Int      @id @default(autoincrement())
+  usuarioId          Int
+  usuario            Usuario  @relation(fields: [usuarioId], references: [id])
+  lojaId             Int
+  loja               Loja     @relation(fields: [lojaId], references: [id])
+  latitude           Float
+  longitude          Float
+  enderecoConfirmado String
+  createdAt          DateTime @default(now())
+}
+
+model ControlePedidoLojaDia {
+  id                     Int      @id @default(autoincrement())
+  usuarioEmail           String
+  usuarioId              Int?
+  usuario                Usuario? @relation(fields: [usuarioId], references: [id])
+  lojaId                 String
+  dataReferencia         String
+  pedidoPrincipalEnviado Boolean  @default(false)
+  pedidoExtraRealizado   Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@unique([usuarioEmail, lojaId, dataReferencia])
+}

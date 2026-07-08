@@ -1,0 +1,44 @@
+{
+  "name": "sistema-consignado",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "set COOKIE_SECURE=false&& set WATCHPACK_POLLING=true&& next dev --webpack -H 0.0.0.0",
+    "dev:ngrok": "set WATCHPACK_POLLING=true&& next dev --webpack -H 0.0.0.0",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint",
+    "seed:usuarios": "npx tsx prisma/seed-usuarios.ts",
+    "reset-senha:usuario": "npx tsx prisma/reset-senha-usuario.ts",
+    "sync:senhas-padrao": "npx tsx prisma/sincronizar-senhas-padrao.ts",
+    "regeocodificar:lojas": "npx tsx prisma/regeocodificar-lojas.ts",
+    "seed:loja-produtos": "npx tsx prisma/seed-loja-produtos.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.8.0",
+    "@prisma/client": "7.8.0",
+    "apexcharts": "^5.15.2",
+    "dotenv": "^16.4.7",
+    "lucide-react": "^1.21.0",
+    "next": "16.2.9",
+    "nodemailer": "^9.0.3",
+    "pg": "^8.16.0",
+    "react": "19.2.4",
+    "react-apexcharts": "^2.1.1",
+    "react-dom": "19.2.4",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "prisma": "^7.8.0",
+    "tailwindcss": "^4.2.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5"
+  }
+}

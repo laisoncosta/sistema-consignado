@@ -1,0 +1,1 @@
+ALTER TABLE "Pedido" ADD COLUMN "inicioVisitaEm" TIMESTAMP(3);

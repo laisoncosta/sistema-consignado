@@ -32,6 +32,7 @@ Você está trabalhando no **Sistema Integrado de Pedidos Consignados** — apli
 ## Stack
 - Next.js 16 (App Router) + TypeScript
 - PostgreSQL + Prisma 7 (schema: prisma/schema.prisma; client em app/generated/prisma)
+- Banco de dados atual: Neon (Postgres). Decisão de banco definitivo (Neon vs. outro provedor) ainda em aberto — não migrar, sugerir migração ou assumir outro banco sem instrução explícita do usuário.
 - Tailwind CSS 4
 - Autenticação por sessão (cookie + middleware)
 - Deploy: Vercel (branch main → deploy automático)
@@ -90,6 +91,11 @@ Pedido guarda: numeroAmigavel, tipoLancamento (principal/extra), inicioVisitaEm,
 - prisma/ — schema e migrations
 - Documentacao/ — docs 01 a 05
 
+## Deploy
+- package.json tem script "postinstall" rodando "prisma generate" — necessário para o build funcionar na Vercel. Não remover nem alterar sem aviso.
+- Commits devem sempre usar o e-mail da conta GitHub do usuário (laisoncosta) — nunca e-mail genérico de agente/IA, para não bloquear o deploy na Vercel.
+- Push para a branch main aciona deploy automático em produção — reforça a regra de nunca dar push sem aprovação explícita.
+
 ## Arquivos-chave
 - lib/rbac.ts — perfis, rotas, sidebar
 - lib/pedido.ts, lib/cerca-virtual.ts — regras promotor
@@ -107,6 +113,8 @@ Pedido guarda: numeroAmigavel, tipoLancamento (principal/extra), inicioVisitaEm,
 - Tema claro/escuro via ThemeProvider; login sempre claro
 - Datas operacionais no fuso Brasil
 - Não commitar .env nem credenciais
+- Nunca alterar prisma/schema.prisma ou criar/rodar migrations no banco sem aprovação explícita do usuário nesta conversa.
+- Se uma instrução for ambígua, ou puder afetar RBAC, dados existentes, ou mais de uma tela ao mesmo tempo, parar e perguntar antes de implementar.
 
 ## Preferências do projeto (obrigatório)
 - Responder em **português**

@@ -406,6 +406,7 @@ export function PedidoRaioXModal({
                     longitudeEnvio={raioX.mapa.longitudeEnvio}
                     latitudeLoja={raioX.mapa.latitudeLoja}
                     longitudeLoja={raioX.mapa.longitudeLoja}
+                    distanciaMetros={raioX.cercaVirtual.distanciaMetros}
                   />
                 </section>
               ) : null}

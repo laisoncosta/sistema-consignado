@@ -857,10 +857,10 @@ export function ExpedicaoPainel({
         </div>
       ) : null}
 
-      <main className="mx-auto flex h-[calc(100svh-5.5rem)] w-full max-w-[95%] flex-col px-4 py-3 2xl:max-w-[1600px] lg:px-6">
-        <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <main className="mx-auto w-full max-w-[95%] px-4 py-3 2xl:max-w-[1600px] lg:px-6">
+        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div
-            className="shrink-0 border-b px-6 py-3 sm:px-8"
+            className="border-b px-6 py-3 sm:px-8"
             style={{
               borderColor: corDestaqueLightPainel,
               background: gradienteCabecalhoPainel(corDestaqueLightPainel),
@@ -900,7 +900,7 @@ export function ExpedicaoPainel({
           </div>
 
           {alertasRegionais ? (
-            <div className="shrink-0 border-b border-slate-200 bg-slate-50/40 px-6 py-2.5 dark:border-slate-700 dark:bg-slate-900/50 sm:px-8">
+            <div className="border-b border-slate-200 bg-slate-50/40 px-6 py-2.5 dark:border-slate-700 dark:bg-slate-900/50 sm:px-8">
               <div
                 className={
                   alertasRegionais.length > 1
@@ -920,7 +920,7 @@ export function ExpedicaoPainel({
             </div>
           ) : null}
 
-          <div className="shrink-0 space-y-3 border-b border-slate-200 px-6 py-3">
+          <div className="space-y-3 border-b border-slate-200 px-6 py-3">
             {exibirFiltroRegiao ? (
               <div className="flex flex-wrap items-center gap-3">
                 {(
@@ -1129,7 +1129,7 @@ export function ExpedicaoPainel({
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-auto">
+          <div className="overflow-x-auto">
             {carregando ? (
               <div className="flex items-center justify-center gap-2 py-16 text-slate-500">
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -1266,7 +1266,7 @@ export function ExpedicaoPainel({
           </div>
 
           {!carregando && paginacao.total > 0 ? (
-            <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-2 py-2.5 dark:border-slate-700">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-2 py-2.5 dark:border-slate-700">
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Página {pagina} de {paginacao.totalPaginas} · {paginacao.total}{" "}
                 lançamento(s)

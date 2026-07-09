@@ -18,11 +18,8 @@ import {
 } from "react";
 
 import { PedidoRaioXModal } from "@/components/admin/PedidoRaioXModal";
-import { DashboardChart } from "@/components/dashboard/executivo/DashboardChart";
 import { InputDataBrasil } from "@/components/ui/InputDataBrasil";
-import { useThemeAparencia } from "@/components/theme/ThemeProvider";
 import { apiFetch } from "@/lib/api-client";
-import { opcoesGraficoLinhaPainel } from "@/lib/chart-aparencia";
 import { gradienteCabecalhoPainel } from "@/lib/painel-aparencia";
 import { getBrandByRegiao, type BrandTheme } from "@/lib/brands";
 import { obterDataHojeBrasil } from "@/lib/data-brasil";
@@ -31,7 +28,6 @@ import {
   rotuloStatusPedidoVisita,
 } from "@/lib/pedido-numero-amigavel";
 import {
-  calcularSerieTempoPermanenciaPorDia,
   calcularTotaisRelatorioVisitas,
   filtrarRegistrosRelatorioVisitas,
   type AlertaCancelamentoVisita,
@@ -204,8 +200,6 @@ export function RelatorioVisitasPainel({
   const [erroRestauracao, setErroRestauracao] = useState<string | null>(null);
   const [pedidoRaioXId, setPedidoRaioXId] = useState<number | null>(null);
   const podeGerenciarPedidos = role === ROLES.DIRETOR;
-  const { theme: themeAparencia } = useThemeAparencia();
-  const escuro = themeAparencia === "dark";
 
   const brandAtivo = useMemo(() => {
     if (!exibirFiltroRegiao) {
@@ -401,16 +395,6 @@ export function RelatorioVisitasPainel({
     [registrosFiltrados],
   );
 
-  const serieTempoPorDia = useMemo(
-    () =>
-      calcularSerieTempoPermanenciaPorDia(
-        registrosFiltrados,
-        dataInicial,
-        dataFinal,
-      ),
-    [dataFinal, dataInicial, registrosFiltrados],
-  );
-
   function abrirExclusao(registro: RegistroRelatorioVisita) {
     setPedidoExclusao(registro);
     setMotivoExclusao("");
@@ -545,17 +529,6 @@ export function RelatorioVisitasPainel({
       setRestaurando(false);
     }
   }
-
-  const chartOptions = useMemo(
-    () =>
-      opcoesGraficoLinhaPainel({
-        corPrimaria: brandAtivo.primary,
-        categorias: serieTempoPorDia.map((ponto) => ponto.rotulo),
-        escuro,
-        formatarTooltip: (valor) => `${valor} min`,
-      }),
-    [brandAtivo.primary, escuro, serieTempoPorDia],
-  );
 
   return (
     <main className="mx-auto w-full max-w-[95%] px-4 py-6 2xl:max-w-[1600px] lg:px-6">
@@ -819,33 +792,6 @@ export function RelatorioVisitasPainel({
           {erro}
         </div>
       ) : null}
-
-      <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-        <h3 className="text-sm font-semibold text-slate-800">
-          Tempo de Permanência em Loja por dia
-        </h3>
-        <div className="mt-1">
-          {carregando ? (
-            <div className="flex h-[140px] items-center justify-center gap-2 text-sm text-slate-500">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Carregando gráfico...
-            </div>
-          ) : (
-            <DashboardChart
-              key={escuro ? "chart-escuro" : "chart-claro"}
-              type="line"
-              height={140}
-              series={[
-                {
-                  name: "Tempo médio (min)",
-                  data: serieTempoPorDia.map((ponto) => ponto.minutosMedios),
-                },
-              ]}
-              options={chartOptions}
-            />
-          )}
-        </div>
-      </div>
 
       <div className="min-h-[420px] flex-1 overflow-hidden rounded-xl border border-slate-200 bg-white">
         {carregando ? (

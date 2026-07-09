@@ -1,22 +1,23 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react";
+
 type MapaAuditoriaPedidoProps = {
   latitudeEnvio: number | null;
   longitudeEnvio: number | null;
   latitudeLoja: number | null;
   longitudeLoja: number | null;
+  distanciaMetros?: number | null;
 };
 
-type PontoMapa = {
+export type PontoAuditoriaMapa = {
   lat: number;
   lng: number;
   rotulo: string;
-  cor: "emerald" | "rose";
-};
-
-type BboxMapa = {
-  minLng: number;
-  minLat: number;
-  maxLng: number;
-  maxLat: number;
+  descricao: string;
+  cor: "#10b981" | "#f43f5e";
+  corBadge: "emerald" | "rose";
 };
 
 function coordenadaValida(lat: number | null, lng: number | null): boolean {
@@ -29,66 +30,21 @@ function coordenadaValida(lat: number | null, lng: number | null): boolean {
   );
 }
 
-function montarBbox(pontos: PontoMapa[]): BboxMapa {
-  const lats = pontos.map((p) => p.lat);
-  const lngs = pontos.map((p) => p.lng);
-
-  let minLat = Math.min(...lats);
-  let maxLat = Math.max(...lats);
-  let minLng = Math.min(...lngs);
-  let maxLng = Math.max(...lngs);
-
-  const deltaLat = maxLat - minLat;
-  const deltaLng = maxLng - minLng;
-  const paddingLat = Math.max(deltaLat * 0.35, 0.004);
-  const paddingLng = Math.max(deltaLng * 0.35, 0.004);
-
-  minLat -= paddingLat;
-  maxLat += paddingLat;
-  minLng -= paddingLng;
-  maxLng += paddingLng;
-
-  return { minLng, minLat, maxLng, maxLat };
+export function formatarCoordenadaMapa(lat: number, lng: number): string {
+  return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 }
 
-function montarUrlEmbed(bbox: BboxMapa, marcador?: PontoMapa): string {
-  const params = new URLSearchParams({
-    bbox: `${bbox.minLng},${bbox.minLat},${bbox.maxLng},${bbox.maxLat}`,
-    layer: "mapnik",
-  });
-
-  if (marcador) {
-    params.set("marker", `${marcador.lat},${marcador.lng}`);
-  }
-
-  return `https://www.openstreetmap.org/export/embed.html?${params.toString()}`;
-}
-
-function calcularPosicaoMarcador(
-  ponto: PontoMapa,
-  bbox: BboxMapa,
-): { left: string; top: string } {
-  const lngRange = bbox.maxLng - bbox.minLng || 0.0001;
-  const latRange = bbox.maxLat - bbox.minLat || 0.0001;
-
-  const leftPct = ((ponto.lng - bbox.minLng) / lngRange) * 100;
-  const topPct = ((bbox.maxLat - ponto.lat) / latRange) * 100;
-
-  return {
-    left: `${Math.min(96, Math.max(4, leftPct))}%`,
-    top: `${Math.min(92, Math.max(8, topPct))}%`,
-  };
-}
-
-export function MapaAuditoriaPedido(props: MapaAuditoriaPedidoProps) {
-  const pontos: PontoMapa[] = [];
+export function montarPontosAuditoriaMapa(props: MapaAuditoriaPedidoProps): PontoAuditoriaMapa[] {
+  const pontos: PontoAuditoriaMapa[] = [];
 
   if (coordenadaValida(props.latitudeLoja, props.longitudeLoja)) {
     pontos.push({
       lat: props.latitudeLoja!,
       lng: props.longitudeLoja!,
       rotulo: "Loja",
-      cor: "emerald",
+      descricao: "Coordenada cadastrada da cerca virtual",
+      cor: "#10b981",
+      corBadge: "emerald",
     });
   }
 
@@ -96,10 +52,70 @@ export function MapaAuditoriaPedido(props: MapaAuditoriaPedidoProps) {
     pontos.push({
       lat: props.latitudeEnvio!,
       lng: props.longitudeEnvio!,
-      rotulo: "Envio do promotor",
-      cor: "rose",
+      rotulo: "Envio do pedido",
+      descricao: "GPS registrado no momento do envio pelo promotor",
+      cor: "#f43f5e",
+      corBadge: "rose",
     });
   }
+
+  return pontos;
+}
+
+function calcularCentro(pontos: PontoAuditoriaMapa[]): { lat: number; lng: number } {
+  const lat =
+    pontos.reduce((total, ponto) => total + ponto.lat, 0) / pontos.length;
+  const lng =
+    pontos.reduce((total, ponto) => total + ponto.lng, 0) / pontos.length;
+
+  return { lat, lng };
+}
+
+function calcularZoom(pontos: PontoAuditoriaMapa[]): number {
+  if (pontos.length === 1) {
+    return 16;
+  }
+
+  const lats = pontos.map((ponto) => ponto.lat);
+  const lngs = pontos.map((ponto) => ponto.lng);
+  const latSpan = Math.max(...lats) - Math.min(...lats);
+  const lngSpan = Math.max(...lngs) - Math.min(...lngs);
+  const span = Math.max(latSpan, lngSpan);
+
+  if (span < 0.0004) return 18;
+  if (span < 0.001) return 17;
+  if (span < 0.004) return 16;
+  if (span < 0.015) return 15;
+  if (span < 0.05) return 14;
+  if (span < 0.15) return 13;
+  return 12;
+}
+
+function montarUrlAbrirMapa(pontos: PontoAuditoriaMapa[]): string {
+  const centro = calcularCentro(pontos);
+  const zoom = calcularZoom(pontos);
+
+  return `https://www.openstreetmap.org/#map=${zoom}/${centro.lat}/${centro.lng}`;
+}
+
+const MapaAuditoriaLeaflet = dynamic(
+  () =>
+    import("@/components/admin/MapaAuditoriaLeaflet").then(
+      (modulo) => modulo.MapaAuditoriaLeaflet,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[280px] items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        Carregando mapa...
+      </div>
+    ),
+  },
+);
+
+export function MapaAuditoriaPedido(props: MapaAuditoriaPedidoProps) {
+  const pontos = montarPontosAuditoriaMapa(props);
 
   if (pontos.length === 0) {
     return (
@@ -109,56 +125,53 @@ export function MapaAuditoriaPedido(props: MapaAuditoriaPedidoProps) {
     );
   }
 
-  const bbox = montarBbox(pontos);
-  const urlEmbed = montarUrlEmbed(
-    bbox,
-    pontos.length === 1 ? pontos[0] : undefined,
-  );
-  const exibirOverlay = pontos.length > 1;
+  const urlAbrirMapa = montarUrlAbrirMapa(pontos);
+  const distanciaTexto =
+    props.distanciaMetros != null && Number.isFinite(props.distanciaMetros)
+      ? `${Math.round(props.distanciaMetros)} m entre loja e envio`
+      : null;
 
   return (
-    <div className="space-y-2">
-      <div className="relative h-[200px] overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-        <iframe
-          width="100%"
-          height="200"
-          className="absolute inset-0 h-full w-full border-0"
-          title="Mapa comparativo entre loja e ponto de envio do pedido"
-          loading="lazy"
-          src={urlEmbed}
-        />
-        {exibirOverlay
-          ? pontos.map((ponto) => {
-              const posicao = calcularPosicaoMarcador(ponto, bbox);
+    <div className="space-y-3">
+      <MapaAuditoriaLeaflet pontos={pontos} distanciaMetros={props.distanciaMetros} />
 
-              return (
-                <span
-                  key={ponto.rotulo}
-                  className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full"
-                  style={{ left: posicao.left, top: posicao.top }}
-                  title={ponto.rotulo}
-                >
-                  <span
-                    className={`inline-flex h-4 w-4 items-center justify-center rounded-full border-2 border-white shadow-md ${
-                      ponto.cor === "emerald" ? "bg-emerald-500" : "bg-rose-500"
-                    }`}
-                  />
-                </span>
-              );
-            })
-          : null}
-      </div>
-      <div className="flex flex-wrap gap-3 text-xs text-slate-600">
+      <div className="grid gap-2 sm:grid-cols-2">
         {pontos.map((ponto) => (
-          <span key={ponto.rotulo} className="inline-flex items-center gap-1.5">
-            <span
-              className={`h-2.5 w-2.5 rounded-full ${
-                ponto.cor === "emerald" ? "bg-emerald-500" : "bg-rose-500"
-              }`}
-            />
-            {ponto.rotulo}
-          </span>
+          <div
+            key={ponto.rotulo}
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className={`h-3 w-3 shrink-0 rounded-full ${
+                  ponto.corBadge === "emerald" ? "bg-emerald-500" : "bg-rose-500"
+                }`}
+                aria-hidden="true"
+              />
+              <p className="text-sm font-semibold text-slate-800">{ponto.rotulo}</p>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">{ponto.descricao}</p>
+            <p className="mt-1 font-mono text-xs text-slate-700">
+              {formatarCoordenadaMapa(ponto.lat, ponto.lng)}
+            </p>
+          </div>
         ))}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+        <p>
+          Mapa fixo para auditoria — os marcadores permanecem no local ao rolar a
+          tela.
+          {distanciaTexto ? ` Distância: ${distanciaTexto}.` : null}
+        </p>
+        <a
+          href={urlAbrirMapa}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-slate-700 underline-offset-2 hover:underline"
+        >
+          Abrir no OpenStreetMap
+        </a>
       </div>
     </div>
   );

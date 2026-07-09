@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import {
   aplicarThemeAparenciaNoDocumento,
-  lerThemeAparenciaSalvo,
+  resolverThemeAparencia,
 } from "@/lib/theme-aparencia";
 
 type LoginThemeShellProps = {
@@ -18,7 +18,7 @@ export function LoginThemeShell({ children }: LoginThemeShellProps) {
     document.documentElement.style.colorScheme = "light";
 
     return () => {
-      aplicarThemeAparenciaNoDocumento(lerThemeAparenciaSalvo());
+      aplicarThemeAparenciaNoDocumento(resolverThemeAparencia());
     };
   }, []);
 

@@ -83,6 +83,14 @@ body {
   background-color: var(--surface-muted) !important;
 }
 
+.dark .bg-slate-50\/60 {
+  background-color: color-mix(in srgb, var(--surface-muted) 88%, transparent) !important;
+}
+
+.dark .bg-slate-50\/70 {
+  background-color: color-mix(in srgb, var(--surface-muted) 92%, transparent) !important;
+}
+
 .dark .bg-slate-100 {
   background-color: var(--surface-elevated) !important;
 }

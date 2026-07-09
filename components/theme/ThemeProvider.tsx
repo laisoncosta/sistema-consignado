@@ -13,7 +13,7 @@ import {
 import {
   alternarThemeAparencia,
   aplicarThemeAparenciaNoDocumento,
-  lerThemeAparenciaSalvo,
+  resolverThemeAparencia,
   salvarThemeAparencia,
   THEME_INIT_SCRIPT,
   type ThemeAparencia,
@@ -43,9 +43,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   ));
 
   useEffect(() => {
-    const salvo = lerThemeAparenciaSalvo();
-    setThemeState(salvo);
-    aplicarThemeAparenciaNoDocumento(salvo);
+    const temaAtual = resolverThemeAparencia();
+    setThemeState(temaAtual);
+    aplicarThemeAparenciaNoDocumento(temaAtual);
     setMontado(true);
   }, []);
 

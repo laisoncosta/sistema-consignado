@@ -66,13 +66,13 @@ Variáveis sensíveis (banco, e-mail, URL do app) ficam no arquivo `.env` local 
 
 ## Estrutura da documentação
 
-| Arquivo | Conteúdo |
-|---|---|
-| `01-Visao_Geral.md` | Este documento — contexto geral |
-| `02-Banco-Dados.md` | Tabelas, relacionamentos e migrations |
-| `03-Telas.md` | Rotas, telas e fluxos de interface |
-| `04-Regras-Negocios.md` | Regras de negócio e validações |
-| `05-Prompt-Mestre.md` | Prompt base para uso com IA no projeto |
+| Ordem | Arquivo | Conteúdo |
+|---|---|---|
+| 1 | `01-Visao_Geral.md` | Contexto geral do sistema |
+| 2 | `02-Regras-Negocios.md` | Regras de negócio e validações |
+| 3 | `03-Telas.md` | Rotas, telas e fluxos de interface |
+| 4 | `04-Banco-Dados.md` | Tabelas, relacionamentos e migrations |
+| 5 | `05-Prompt-Mestre.md` | Prompt base para uso com IA no projeto |
 
 ---
 

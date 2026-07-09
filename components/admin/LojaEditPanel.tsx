@@ -11,6 +11,27 @@ import {
 import { LojaLocalizacaoCampos } from "@/components/admin/LojaLocalizacaoCampos";
 import type { BrandTheme } from "@/lib/brands";
 import {
+  classeBotaoFecharPainel,
+  classeBotaoMarcarTodos,
+  classeBotaoSecundario,
+  classeCabecalhoPainel,
+  classeErroFormulario,
+  classeInput,
+  classeInputDesabilitado,
+  classeItemCheckbox,
+  classeLabelCampo,
+  classePainelLateral,
+  classeRodapePainel,
+  classeSecaoFormulario,
+  classeSecaoFormularioCompacta,
+  classeSubtituloPainel,
+  classeTextoAuxiliar,
+  classeTextoItemCheckbox,
+  classeTituloPainel,
+  classeTituloSecao,
+  classeVazioTracejado,
+} from "@/lib/form-aparencia";
+import {
   booleanParaStatusCercaLoja,
   type LojaCatalogoItem,
   type LojaEdicaoFormData,
@@ -215,9 +236,7 @@ export function LojaEditPanel({
   }
 
   const cercaAtiva = formulario.cercaVirtualStatus === "ativar";
-  const classeCampoCerca = cercaAtiva
-    ? "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-transparent focus:ring-2"
-    : "w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-500";
+  const classeCampoCerca = cercaAtiva ? classeInput : classeInputDesabilitado;
   const classeCampoCercaMono = `${classeCampoCerca} font-mono`;
 
   return (
@@ -229,24 +248,24 @@ export function LojaEditPanel({
         onClick={onFechar}
       />
 
-      <aside className="relative flex h-full w-full max-w-2xl flex-col bg-white shadow-2xl">
+      <aside className={classePainelLateral}>
         <div
-          className="border-b px-6 py-5"
+          className={classeCabecalhoPainel}
           style={{ borderColor: brand.primaryLight }}
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <p className={classeSubtituloPainel}>
                 Edição
               </p>
-              <h2 className="mt-1 text-xl font-semibold text-slate-800">
+              <h2 className={classeTituloPainel}>
                 Editar Loja
               </h2>
             </div>
             <button
               type="button"
               onClick={onFechar}
-              className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+              className={classeBotaoFecharPainel}
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
@@ -256,15 +275,15 @@ export function LojaEditPanel({
 
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
           <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
-            <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
-              <h3 className="text-sm font-semibold text-slate-800">
+            <div className={classeSecaoFormulario}>
+              <h3 className={classeTituloSecao}>
                 Dados da Loja
               </h3>
 
               <div>
                 <label
                   htmlFor="editar-loja-codigo"
-                  className="mb-2 block text-sm font-medium text-slate-700"
+                  className={classeLabelCampo}
                 >
                   Código CISS
                 </label>
@@ -276,7 +295,7 @@ export function LojaEditPanel({
                       atual ? { ...atual, codigo: event.target.value } : atual,
                     )
                   }
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-mono text-slate-800 outline-none transition focus:border-transparent focus:ring-2"
+                  className={`${classeInput} font-mono`}
                   style={inputRingStyle}
                   required
                 />
@@ -285,7 +304,7 @@ export function LojaEditPanel({
               <div>
                 <label
                   htmlFor="editar-loja-nome"
-                  className="mb-2 block text-sm font-medium text-slate-700"
+                  className={classeLabelCampo}
                 >
                   Nome da Loja
                 </label>
@@ -297,7 +316,7 @@ export function LojaEditPanel({
                       atual ? { ...atual, nome: event.target.value } : atual,
                     )
                   }
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-transparent focus:ring-2"
+                  className={classeInput}
                   style={inputRingStyle}
                   required
                 />
@@ -307,7 +326,7 @@ export function LojaEditPanel({
                 <div>
                   <label
                     htmlFor="editar-loja-regiao"
-                    className="mb-2 block text-sm font-medium text-slate-700"
+                    className={classeLabelCampo}
                   >
                     Região
                   </label>
@@ -321,7 +340,7 @@ export function LojaEditPanel({
                           : atual,
                       )
                     }
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-transparent focus:ring-2"
+                    className={classeInput}
                     style={inputRingStyle}
                     required
                   >
@@ -336,7 +355,7 @@ export function LojaEditPanel({
                 <div>
                   <label
                     htmlFor="editar-loja-status"
-                    className="mb-2 block text-sm font-medium text-slate-700"
+                    className={classeLabelCampo}
                   >
                     Status
                   </label>
@@ -350,7 +369,7 @@ export function LojaEditPanel({
                           : atual,
                       )
                     }
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-transparent focus:ring-2"
+                    className={classeInput}
                     style={inputRingStyle}
                   >
                     <option value="ativa">Ativa</option>
@@ -382,8 +401,8 @@ export function LojaEditPanel({
               }
             />
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-5">
-              <h3 className="mb-4 text-sm font-semibold text-slate-800">
+            <div className={classeSecaoFormularioCompacta}>
+              <h3 className={`${classeTituloSecao} mb-4`}>
                 Parâmetro Cerca Virtual
               </h3>
 
@@ -391,7 +410,7 @@ export function LojaEditPanel({
                 <div>
                   <label
                     htmlFor="editar-loja-cerca-status"
-                    className="mb-2 block text-sm font-medium text-slate-700"
+                    className={classeLabelCampo}
                   >
                     Status da Cerca
                   </label>
@@ -411,7 +430,7 @@ export function LojaEditPanel({
                           : atual,
                       )
                     }
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-transparent focus:ring-2"
+                    className={classeInput}
                     style={inputRingStyle}
                   >
                     <option value="desativar">Desativar</option>
@@ -423,7 +442,7 @@ export function LojaEditPanel({
                   <div>
                     <label
                       htmlFor="editar-loja-latitude"
-                      className="mb-2 block text-sm font-medium text-slate-700"
+                      className={classeLabelCampo}
                     >
                       Latitude
                     </label>
@@ -445,7 +464,7 @@ export function LojaEditPanel({
                   <div>
                     <label
                       htmlFor="editar-loja-longitude"
-                      className="mb-2 block text-sm font-medium text-slate-700"
+                      className={classeLabelCampo}
                     >
                       Longitude
                     </label>
@@ -469,7 +488,7 @@ export function LojaEditPanel({
                 <div>
                   <label
                     htmlFor="editar-loja-perimetro"
-                    className="mb-2 block text-sm font-medium text-slate-700"
+                    className={classeLabelCampo}
                   >
                     Perímetro (metros)
                   </label>
@@ -495,11 +514,11 @@ export function LojaEditPanel({
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className={`${classeSecaoFormularioCompacta} bg-[var(--surface)]`}>
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4" style={{ color: brand.primary }} />
-                  <h3 className="text-sm font-semibold text-slate-800">
+                  <h3 className={classeTituloSecao}>
                     Ativar Produtos nesta Loja
                   </h3>
                 </div>
@@ -508,36 +527,36 @@ export function LojaEditPanel({
                     <button
                       type="button"
                       onClick={() => marcarTodosProdutos(true)}
-                      className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-white"
+                      className={classeBotaoMarcarTodos}
                     >
                       Marcar todos
                     </button>
                     <button
                       type="button"
                       onClick={() => marcarTodosProdutos(false)}
-                      className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-white"
+                      className={classeBotaoMarcarTodos}
                     >
                       Desmarcar todos
                     </button>
                   </div>
                 ) : null}
               </div>
-              <p className="mb-4 text-xs text-slate-500">
+              <p className={`mb-4 ${classeTextoAuxiliar}`}>
                 Produtos disponíveis para a região selecionada. Marque os itens
                 que devem estar ativos nesta loja.
               </p>
 
               {carregandoProdutos ? (
-                <div className="flex items-center justify-center gap-2 py-10 text-sm text-slate-500">
+                <div className={`flex items-center justify-center gap-2 py-10 text-sm ${classeTextoAuxiliar}`}>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Carregando produtos da região...
                 </div>
               ) : erroProdutos ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div className={classeErroFormulario}>
                   {erroProdutos}
                 </div>
               ) : produtos.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center text-sm text-slate-500">
+                <div className={classeVazioTracejado}>
                   Nenhum produto cadastrado para esta região.
                 </div>
               ) : (
@@ -545,20 +564,20 @@ export function LojaEditPanel({
                   {produtos.map((produto) => (
                     <label
                       key={produto.id}
-                      className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition hover:border-slate-300 hover:bg-white"
+                      className={classeItemCheckbox}
                     >
                       <input
                         type="checkbox"
                         checked={produto.ativoNaLoja}
                         onChange={() => alternarProduto(produto.id)}
-                        className="h-4 w-4 rounded border-slate-300"
+                        className="h-4 w-4 rounded border-[var(--border)]"
                         style={{ accentColor: brand.primary }}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-slate-800">
+                        <p className={classeTextoItemCheckbox}>
                           {produto.descricao}
                         </p>
-                        <p className="font-mono text-xs text-slate-500">
+                        <p className={`font-mono text-xs ${classeTextoAuxiliar}`}>
                           {produto.codigo}
                         </p>
                       </div>
@@ -569,19 +588,19 @@ export function LojaEditPanel({
             </div>
 
             {erro ? (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className={classeErroFormulario}>
                 {erro}
               </div>
             ) : null}
           </div>
 
-          <div className="border-t border-slate-200 px-6 py-5">
+          <div className={classeRodapePainel}>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={onFechar}
                 disabled={salvando}
-                className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+                className={classeBotaoSecundario}
               >
                 Cancelar
               </button>

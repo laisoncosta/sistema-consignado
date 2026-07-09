@@ -18,7 +18,15 @@ import {
 
 export type EventoLinhaTempoPedido = {
   id: string;
-  tipo: "criacao" | "aprovacao" | "exclusao" | "restauracao" | "reprovacao" | "outro";
+  tipo:
+    | "checkin"
+    | "checkout"
+    | "criacao"
+    | "aprovacao"
+    | "exclusao"
+    | "restauracao"
+    | "reprovacao"
+    | "outro";
   dataHora: string;
   dataHoraRotulo: string;
   titulo: string;
@@ -161,15 +169,67 @@ type LogAuditoriaEntrada = {
   usuarioNome: string;
 };
 
+const ORDEM_TIPO_EVENTO_LINHA_TEMPO: Record<
+  EventoLinhaTempoPedido["tipo"],
+  number
+> = {
+  checkin: 0,
+  criacao: 1,
+  checkout: 2,
+  aprovacao: 10,
+  reprovacao: 11,
+  outro: 12,
+  exclusao: 20,
+  restauracao: 21,
+};
+
+function ordenarEventosLinhaTempo(
+  eventos: EventoLinhaTempoPedido[],
+): EventoLinhaTempoPedido[] {
+  return [...eventos].sort((a, b) => {
+    const diff =
+      new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime();
+
+    if (diff !== 0) {
+      return diff;
+    }
+
+    return (
+      ORDEM_TIPO_EVENTO_LINHA_TEMPO[a.tipo] -
+      ORDEM_TIPO_EVENTO_LINHA_TEMPO[b.tipo]
+    );
+  });
+}
+
+function inicioVisitaValido(data: Date | null | undefined): data is Date {
+  return data != null && !Number.isNaN(data.getTime());
+}
+
 export function montarLinhaTempoPedido(params: {
   pedidoId: number;
   createdAt: Date;
+  inicioVisitaEm: Date | null;
   promotorNome: string;
   motivoExclusao: string | null;
   logsExpedicao: LogExpedicaoEntrada[];
   logsAuditoria: LogAuditoriaEntrada[];
 }): EventoLinhaTempoPedido[] {
   const eventos: EventoLinhaTempoPedido[] = [];
+  const inicioVisita = inicioVisitaValido(params.inicioVisitaEm)
+    ? params.inicioVisitaEm
+    : null;
+
+  if (inicioVisita) {
+    eventos.push({
+      id: `checkin-${params.pedidoId}`,
+      tipo: "checkin",
+      dataHora: inicioVisita.toISOString(),
+      dataHoraRotulo: formatarDataHoraBrasil(inicioVisita),
+      titulo: "Check-in na loja",
+      detalhe: "Entrada registrada pelo promotor com geolocalização.",
+      usuarioNome: params.promotorNome,
+    });
+  }
 
   eventos.push({
     id: `criacao-${params.pedidoId}`,
@@ -177,9 +237,29 @@ export function montarLinhaTempoPedido(params: {
     dataHora: params.createdAt.toISOString(),
     dataHoraRotulo: formatarDataHoraBrasil(params.createdAt),
     titulo: "Pedido criado/enviado",
-    detalhe: `Registrado pelo promotor na loja.`,
+    detalhe: "Lançamento quantitativo enviado pelo promotor na loja.",
     usuarioNome: params.promotorNome,
   });
+
+  if (inicioVisita) {
+    const tempoMinutos = calcularTempoEmLojaMinutos(
+      inicioVisita,
+      params.createdAt,
+    );
+
+    eventos.push({
+      id: `checkout-${params.pedidoId}`,
+      tipo: "checkout",
+      dataHora: params.createdAt.toISOString(),
+      dataHoraRotulo: formatarDataHoraBrasil(params.createdAt),
+      titulo: "Check-out (envio do pedido)",
+      detalhe:
+        tempoMinutos != null
+          ? `Saída registrada no envio. Tempo em loja: ${formatarTempoEmLoja(tempoMinutos)}.`
+          : "Saída registrada no momento do envio do pedido.",
+      usuarioNome: params.promotorNome,
+    });
+  }
 
   for (const log of params.logsExpedicao) {
     const acaoLower = log.acao.toLowerCase();
@@ -270,9 +350,7 @@ export function montarLinhaTempoPedido(params: {
     }
   }
 
-  return eventos.sort(
-    (a, b) => new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime(),
-  );
+  return ordenarEventosLinhaTempo(eventos);
 }
 
 export function montarDistanciaTexto(distanciaMetros: number | null): string {
@@ -412,6 +490,7 @@ export function serializarPedidoRaioX(pedido: PedidoRaioXEntrada): PedidoRaioX {
     linhaTempo: montarLinhaTempoPedido({
       pedidoId: pedido.id,
       createdAt: pedido.createdAt,
+      inicioVisitaEm: pedido.inicioVisitaEm,
       promotorNome: pedido.usuario.nome,
       motivoExclusao: pedido.motivoExclusao,
       logsExpedicao,

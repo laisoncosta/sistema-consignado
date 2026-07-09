@@ -42,6 +42,10 @@ function FarolCerca({ conforme }: { conforme: boolean }) {
 
 function corEventoLinhaTempo(tipo: EventoLinhaTempoPedido["tipo"]): string {
   switch (tipo) {
+    case "checkin":
+      return "bg-violet-500";
+    case "checkout":
+      return "bg-teal-500";
     case "criacao":
       return "bg-sky-500";
     case "aprovacao":

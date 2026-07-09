@@ -235,7 +235,7 @@ export function TransferenciaAvulsaModal({
           </label>
 
           <label className="block space-y-1.5 text-sm">
-            <span className="font-medium text-slate-700">Qtde a Transferir</span>
+            <span className="font-medium text-slate-700">Qtde Avulsa</span>
             <input
               type="number"
               min={0}

@@ -273,7 +273,25 @@ Eventos exibidos **em ordem**, do mais antigo ao mais recente:
 ### Transferências avulsas
 
 - Lançamentos avulsos (fora do fluxo normal do promotor) aparecem no painel de expedição.
+- No modal de transferência avulsa, o campo de quantidade é exibido como **Qtde Avulsa** (rótulo visual; o dado continua sendo a quantidade da transferência).
 - Origem com transferências vinculadas **não pode ser excluída**.
+
+### Romaneio de Conferência (PDF) e colunas derivadas
+
+Fórmulas de exibição por produto (tabela da expedição e PDF):
+
+| Campo | Fórmula |
+|---|---|
+| **Qtde Avulsa** | Quantidade da transferência avulsa (zero em linhas de pedido do portal) |
+| **Pedido CISS** | Pedido Aprovado + Qtde Avulsa |
+| **Pedido Total** | Pedido Aprovado + Troca Atendida + Qtde Avulsa + Bonificação |
+
+Regras:
+
+- **Troca Atendida** e **Bonificação** não entram no Pedido CISS (valor lançado no sistema CISS da empresa).
+- **Pedido Total** representa a quantidade física total que a loja recebe para conferência.
+- No PDF, transferências avulsas são incorporadas nas colunas da tabela principal por produto/loja (não há mais seção separada no final).
+- Exemplo: Pedido Aprovado 20 + Troca Atendida 1 + Qtde Avulsa 25 + Bonificação 25 → Pedido CISS **45**, Pedido Total **71**.
 
 ---
 

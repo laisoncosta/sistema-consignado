@@ -487,20 +487,44 @@ export function quantidadesAprovadasParaExibicao(
   return { pedidoAprovado, trocaAtendida };
 }
 
+export function obterQtdeAvulsaExibicao(linha: LancamentoExpedicao): number {
+  return linha.avulso ? linha.pedidoSolicitado : 0;
+}
+
+export function obterPedidoAprovadoParaCalculo(linha: LancamentoExpedicao): number {
+  return linha.avulso ? 0 : linha.pedidoAprovado;
+}
+
 export function calcularPedidoCiss(
   pedidoAprovado: number,
-  trocaAtendida: number,
-  bonificacao: number,
+  qtdeAvulsa: number,
 ): number {
-  return Math.max(0, pedidoAprovado - trocaAtendida - bonificacao);
+  return pedidoAprovado + qtdeAvulsa;
 }
 
 export function calcularPedidoTotal(
   pedidoAprovado: number,
   trocaAtendida: number,
+  qtdeAvulsa: number,
   bonificacao: number,
 ): number {
-  return pedidoAprovado + trocaAtendida + bonificacao;
+  return pedidoAprovado + trocaAtendida + qtdeAvulsa + bonificacao;
+}
+
+export function calcularPedidoCissLinha(linha: LancamentoExpedicao): number {
+  return calcularPedidoCiss(
+    obterPedidoAprovadoParaCalculo(linha),
+    obterQtdeAvulsaExibicao(linha),
+  );
+}
+
+export function calcularPedidoTotalLinha(linha: LancamentoExpedicao): number {
+  return calcularPedidoTotal(
+    obterPedidoAprovadoParaCalculo(linha),
+    linha.trocaAtendida,
+    obterQtdeAvulsaExibicao(linha),
+    linha.bonificacao,
+  );
 }
 
 export function calcularTotaisExpedicao(

@@ -27,6 +27,7 @@ import { exportarExpedicaoExcel, exportarExpedicaoPdf } from "@/lib/expedicao-ex
 import { gradienteCabecalhoPainel } from "@/lib/painel-aparencia";
 import {
   calcularTotaisExpedicao,
+  calcularPedidoTotalLinha,
   construirOpcoesFiltrosExpedicao,
   filtrarLancamentosExpedicao,
   filtrosExpedicaoIniciais,
@@ -34,6 +35,7 @@ import {
   isStatusPendenteExpedicao,
   itemSemSolicitacaoExpedicao,
   obterDataHojeIso,
+  obterQtdeAvulsaExibicao,
   rotuloTipoPedidoExpedicao,
   type FiltrosExpedicao,
   type LancamentoExpedicao,
@@ -615,6 +617,24 @@ export function ExpedicaoPainel({
     [lancamentosTabela],
   );
 
+  const totalQtdeAvulsa = useMemo(
+    () =>
+      lancamentosTabela.reduce(
+        (acc, linha) => acc + obterQtdeAvulsaExibicao(linha),
+        0,
+      ),
+    [lancamentosTabela],
+  );
+
+  const totalPedidoTotal = useMemo(
+    () =>
+      lancamentosTabela.reduce(
+        (acc, linha) => acc + calcularPedidoTotalLinha(linha),
+        0,
+      ),
+    [lancamentosTabela],
+  );
+
   const alertasRegionais = useMemo(() => {
     const pendentesAnteriores = lancamentosOriginais.filter(
       (linha) =>
@@ -1168,7 +1188,9 @@ export function ExpedicaoPainel({
                     <th className={classeCabecalhoColunaDestaque}>Pedido Aprovado</th>
                     <th className={`text-right ${classeCabecalhoPadrao}`}>Troca Solicitada</th>
                     <th className={classeCabecalhoColunaDestaque}>Troca Atendida</th>
-                    <th className={`text-right ${classeCabecalhoPadrao}`}>Bonificações</th>
+                    <th className={`text-right ${classeCabecalhoPadrao}`}>Qtde Avulsa</th>
+                    <th className={`text-right ${classeCabecalhoPadrao}`}>Bonificação</th>
+                    <th className={classeCabecalhoColunaDestaque}>Pedido Total</th>
                     <th className={classeCabecalhoPadrao}>Data</th>
                     <th className={classeCabecalhoPadrao}>Tipo de Pedido</th>
                     <th className={`${classeCabecalhoPadrao} px-2`}>Status</th>
@@ -1217,7 +1239,13 @@ export function ExpedicaoPainel({
                         {linha.trocaAtendida}
                       </td>
                       <td className={`text-right tabular-nums dark:text-slate-200 ${classeCelulaPadrao}`}>
+                        {obterQtdeAvulsaExibicao(linha)}
+                      </td>
+                      <td className={`text-right tabular-nums dark:text-slate-200 ${classeCelulaPadrao}`}>
                         {linha.bonificacao}
+                      </td>
+                      <td className={classeCelulaColunaDestaque}>
+                        {calcularPedidoTotalLinha(linha)}
                       </td>
                       <td className={`whitespace-nowrap dark:text-slate-200 ${classeCelulaPadrao}`}>
                         {formatarDataBr(linha.dataLancamento)}
@@ -1256,7 +1284,13 @@ export function ExpedicaoPainel({
                       {totais.trocaAtendida}
                     </td>
                     <td className={`text-right tabular-nums ${classeTotalPadrao}`}>
+                      {totalQtdeAvulsa}
+                    </td>
+                    <td className={`text-right tabular-nums ${classeTotalPadrao}`}>
                       {totalBonificacoes}
+                    </td>
+                    <td className={classeTotalColunaDestaque}>
+                      {totalPedidoTotal}
                     </td>
                     <td className={classeTotalPadrao} colSpan={3} />
                   </tr>

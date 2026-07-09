@@ -236,7 +236,10 @@ Cards de pendências por região (quando há pedidos aguardando em datas anterio
 - Status (todos, pendente, aprovado, reprovado)
 
 ### Tabela de lançamentos
-Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, aprovado, troca, origem, status, promotor, data.
+Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, pedido aprovado, troca solicitada, troca atendida, **qtde avulsa**, **bonificação**, **pedido total**, data, tipo, status.
+
+- **Qtde Avulsa:** quantidade de transferência avulsa na linha (zero em pedidos do portal).
+- **Pedido Total:** Pedido Aprovado + Troca Atendida + Qtde Avulsa + Bonificação (conferência física na loja).
 
 **Ações por linha:**
 - Abrir modal de **Aprovação** (pedidos do portal)
@@ -244,7 +247,7 @@ Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, a
 
 ### Barra de ações
 - Atualizar filtros
-- Exportar **PDF**
+- Exportar **PDF** (Romaneio de Conferência de Mercadoria — colunas: Cód Produto, Produto, Origem, Estoque, Pedido Solicitado, Corte Pedido, Troca Atendida, Qtde Avulsa, Bonificação, Pedido CISS, Pedido Total; assinaturas: Responsável Expedição e Motorista)
 - Exportar **Excel**
 
 ### Modais da expedição
@@ -252,7 +255,7 @@ Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, a
 | Modal | Função |
 |---|---|
 | **AprovacaoPedidoModal** | Conferir item: cortes, aprovação, reprovação, origem, bonificação |
-| **TransferenciaAvulsaModal** | Criar/editar lançamento avulso (fora do fluxo do promotor) |
+| **TransferenciaAvulsaModal** | Lançamento avulso (campo **Qtde Avulsa**, bonificação, motivo) |
 
 ---
 

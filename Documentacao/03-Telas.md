@@ -193,7 +193,9 @@ Componente: `HistoricoPedidos`
 
 **Visão desktop:** tabela ampla agrupada por produto, loja, data e status.
 
-**Visão mobile:** cards por pedido com filtros compactos.
+**Visão mobile:** cards por pedido com filtros compactos; layout adaptado ao **tema dark** (cards, filtros, badges e seções de transferência avulsa).
+
+**Campos no card mobile (transferência avulsa):** **Qtde Avulsa**, Bonificação e Motivo (quando houver).
 
 **Dados:** carregados de `/api/pedidos/historico`.
 

@@ -1,5 +1,7 @@
 # Changelog
 
+[10/07/2026] - Corrigido: consulta de histórico no celular adaptada ao tema dark; label Qtde Avulsa alinhada ao romaneio de expedição.
+
 [09/07/2026] - Ajustado: coluna Pedido Total na expedição reposicionada após Bonificação (antes de Data); romaneio PDF com Qtde Avulsa, Pedido CISS e Pedido Total integrados.
 
 [09/07/2026] - Ajustado: tela de Expedição rola inteira; removido gráfico do Relatório de Visita; mapa do Raio-X migrado para Leaflet com marcadores fixos (substitui imagem estática que não carregava).

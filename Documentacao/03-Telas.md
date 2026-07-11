@@ -210,6 +210,8 @@ Mesma rota, painel diferente (`PortalPedidosPainel` com `modoGestaoAdministrativ
 | **Histórico** | Pedidos do promotor selecionado |
 | **Sidebar** | Menu completo de gestão visível |
 
+**Mobile (Admin/Diretor):** menu lateral vira **drawer** (ícone ☰ no cabeçalho), com submenu Administração, sair e tema. Portal em modo gestão usa os mesmos padrões de toque do promotor (`otimizadoMobile`). Telas amplas (cadastros, dashboard executivo) permanecem acessíveis com rolagem horizontal e aviso de melhor experiência no desktop.
+
 ---
 
 ## 4. Expedição
@@ -453,7 +455,7 @@ Mesma estrutura do cadastro, com dados preenchidos e botão **Salvar e Sair**.
 | Status | Ativo, Pendente, Inativo |
 | Ignorar trava de aparelho | Libera login em qualquer dispositivo |
 | Cerca virtual | Ativar / Inativar (promotores) |
-| Lojas vinculadas | Multi-seleção — rota do promotor (somente perfil Promotor) |
+| Lojas vinculadas | Multi-seleção — rota do promotor (somente perfil Promotor); campo de **busca por nome** filtra a lista em tempo real |
 
 ---
 
@@ -501,15 +503,18 @@ O **middleware** protege `/dashboard/*` e `/alterar-senha`:
 | Área | Dispositivo principal |
 |---|---|
 | Portal de Pedidos (promotor) | **Celular** |
+| Portal de Pedidos (admin/diretor) | **Celular e desktop** (modo gestão otimizado no celular) |
 | Histórico (promotor) | Celular e desktop (layouts diferentes) |
 | Login / Cadastro | Responsivo |
-| Expedição | **Desktop** |
-| Dashboard Executivo | **Desktop** |
-| Relatório de Visita | **Desktop** |
-| Cadastros (produtos, lojas, usuários, origens) | **Desktop** |
-| Fechamento | **Desktop** (quando ativo) |
+| Expedição | **Desktop** (acessível no celular para apoio em campo) |
+| Dashboard Executivo | **Desktop** (acessível no celular com aviso) |
+| Relatório de Visita | **Desktop** (acessível no celular com aviso) |
+| Cadastros (produtos, lojas, usuários, origens) | **Desktop** (acessível no celular com aviso) |
+| Fechamento | **Desktop** (quando ativo; acessível no celular com aviso) |
 
-Telas `desktopOnly` exibem aviso em telas pequenas pedindo uso em monitor.
+**Admin/Diretor no celular:** drawer de navegação (☰) espelha o sidebar desktop — Operação + submenu Administração. Logout e tema no cabeçalho.
+
+Telas `desktopOnly` exibem aviso em telas pequenas, mas o conteúdo permanece acessível (rolagem horizontal quando necessário). Layout desktop (`lg+`) inalterado.
 
 ---
 

@@ -4,6 +4,8 @@ import { DashboardHeaderProvider } from "@/components/dashboard/DashboardHeaderC
 
 import { DashboardTopHeader } from "@/components/dashboard/DashboardTopHeader";
 
+import { GestaoMobileMenuProvider } from "@/components/dashboard/DashboardGestaoMobileNav";
+
 import type { BrandTheme } from "@/lib/brands";
 
 import { isGestaoRole, ROLES, type UserRole } from "@/lib/rbac";
@@ -93,7 +95,7 @@ export function DashboardShell({
       <div
 
         className={`flex min-h-screen bg-[var(--background)] font-[family-name:var(--font-poppins)] ${
-          desktopOnly ? "min-w-[1100px]" : ""
+          desktopOnly ? "md:min-w-[1100px]" : ""
         }`}
 
       >
@@ -108,55 +110,51 @@ export function DashboardShell({
 
 
 
-        <div className="relative isolate flex min-w-0 flex-1 flex-col">
+        <GestaoMobileMenuProvider
+          enabled={exibirSidebar}
+          brand={brand}
+          userName={nomeExibicao}
+          userRole={role}
+        >
+          <div className="relative isolate flex min-w-0 flex-1 flex-col">
 
-          <DashboardTopHeader
+            <DashboardTopHeader
 
-            tituloArea={tituloArea}
+              tituloArea={tituloArea}
 
-            tituloRegiaoInicial={regiaoHeader}
+              tituloRegiaoInicial={regiaoHeader}
 
-            brandInicial={brand}
+              brandInicial={brand}
 
-            nomeUsuario={nomeExibicao}
+              nomeUsuario={nomeExibicao}
 
-            exibirLogosDuplos={logosDuplos}
+              exibirLogosDuplos={logosDuplos}
 
-            otimizadoMobile={otimizadoMobile}
+              otimizadoMobile={otimizadoMobile}
 
-            desktopOnly={desktopOnly}
+              desktopOnly={desktopOnly}
 
-            executive={executive}
+              executive={executive}
 
-            exibirAcoesHeader={!exibirSidebar}
+              exibirAcoesHeader={!exibirSidebar}
 
-          />
+              exibirMenuGestaoMobile={exibirSidebar}
+
+            />
 
 
 
-          {desktopOnly ? (
-
-            <>
-
-              <div className="block px-6 py-10 text-center text-sm text-slate-600 dark:text-slate-400 md:hidden">
-
-                Esta área foi otimizada exclusivamente para desktop. Acesse por um
-
-                computador para utilizar o painel completo.
-
+            {desktopOnly ? (
+              <div className="border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-center text-xs leading-relaxed text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200 lg:hidden">
+                Visualização adaptada ao celular. Para a melhor experiência em
+                cadastros e painéis amplos, use um computador.
               </div>
-
-              <div className="relative z-0 hidden md:block">{children}</div>
-
-            </>
-
-          ) : (
+            ) : null}
 
             <div className="relative z-0 flex-1">{children}</div>
 
-          )}
-
-        </div>
+          </div>
+        </GestaoMobileMenuProvider>
 
       </div>
 

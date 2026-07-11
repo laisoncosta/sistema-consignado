@@ -2,6 +2,7 @@
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { BrandLogoDuplo } from "@/components/BrandLogoDuplo";
+import { GestaoMobileMenuButton } from "@/components/dashboard/DashboardGestaoMobileNav";
 import { PromotorHeaderActions } from "@/components/dashboard/PromotorHeaderActions";
 import { useDashboardHeader } from "@/components/dashboard/DashboardHeaderContext";
 import type { BrandTheme } from "@/lib/brands";
@@ -13,6 +14,7 @@ type DashboardTopHeaderProps = {
   nomeUsuario: string;
   exibirLogosDuplos?: boolean;
   exibirAcoesHeader?: boolean;
+  exibirMenuGestaoMobile?: boolean;
   otimizadoMobile?: boolean;
   desktopOnly?: boolean;
   executive?: boolean;
@@ -25,6 +27,7 @@ export function DashboardTopHeader({
   nomeUsuario,
   exibirLogosDuplos = false,
   exibirAcoesHeader = true,
+  exibirMenuGestaoMobile = false,
   otimizadoMobile = false,
   desktopOnly = false,
   executive = false,
@@ -43,7 +46,8 @@ export function DashboardTopHeader({
           otimizadoMobile ? "px-4 py-3 sm:gap-4 sm:px-6 sm:py-5" : "gap-4 px-6 py-5"
         } ${desktopOnly ? "w-full max-w-[1600px]" : "max-w-7xl"}`}
       >
-        <div className="relative z-0 flex min-w-0 items-center gap-3 sm:gap-4">
+        <div className="relative z-0 flex min-w-0 items-center gap-2 sm:gap-3">
+          {exibirMenuGestaoMobile ? <GestaoMobileMenuButton /> : null}
           {exibirLogosDuplos ? (
             <BrandLogoDuplo
               className={otimizadoMobile ? "h-10 sm:h-12" : "h-12"}
@@ -71,6 +75,15 @@ export function DashboardTopHeader({
             primary={brand.primary}
             otimizadoMobile={otimizadoMobile}
           />
+        ) : null}
+        {exibirMenuGestaoMobile ? (
+          <div className="lg:hidden">
+            <PromotorHeaderActions
+              nomeUsuario={nomeUsuario}
+              primary={brand.primary}
+              otimizadoMobile
+            />
+          </div>
         ) : null}
       </div>
     </header>

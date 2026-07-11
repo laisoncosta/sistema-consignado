@@ -223,6 +223,7 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
   const [importandoExcel, setImportandoExcel] = useState(false);
   const [mensagemExcel, setMensagemExcel] = useState<string | null>(null);
   const [erroExcel, setErroExcel] = useState<string | null>(null);
+  const [buscaLojaVinculo, setBuscaLojaVinculo] = useState("");
 
   const inputRingStyle = { "--tw-ring-color": brand.primary } as CSSProperties;
   const classeCampoDrawer =
@@ -296,6 +297,22 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
   useEffect(() => {
     void carregarUsuarios();
   }, [carregarUsuarios]);
+
+  const lojasFiltradasVinculo = useMemo(() => {
+    const termo = buscaLojaVinculo.trim().toLowerCase();
+
+    if (!termo) {
+      return lojasPorRegiao;
+    }
+
+    return lojasPorRegiao.filter((loja) =>
+      loja.nome.toLowerCase().includes(termo),
+    );
+  }, [buscaLojaVinculo, lojasPorRegiao]);
+
+  useEffect(() => {
+    setBuscaLojaVinculo("");
+  }, [formulario.regiaoId]);
 
   useEffect(() => {
     if (!drawerAberto || !formulario.regiaoId || formulario.acessoTodasRegioes) {
@@ -402,6 +419,7 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
     setUsuarioEditando(null);
     setMensagemResetSenha(null);
     setMensagemResetAparelho(null);
+    setBuscaLojaVinculo("");
     setFormulario(formularioVazio(regioes[0]?.id ?? 0));
   }
 
@@ -1245,6 +1263,21 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
                         </span>
                       </div>
 
+                      <div className="relative">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="search"
+                          value={buscaLojaVinculo}
+                          onChange={(event) =>
+                            setBuscaLojaVinculo(event.target.value)
+                          }
+                          placeholder="Buscar loja pelo nome..."
+                          className={`${classeCampoDrawer} pl-9`}
+                          style={inputRingStyle}
+                          aria-label="Buscar loja pelo nome"
+                        />
+                      </div>
+
                       {carregandoLojas ? (
                         <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -1252,7 +1285,7 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
                         </div>
                       ) : (
                         <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-600 dark:bg-slate-800/60">
-                          {lojasPorRegiao.map((loja) => {
+                          {lojasFiltradasVinculo.map((loja) => {
                             const estaVinculada = formulario.lojas.includes(loja.id);
 
                             return (
@@ -1279,6 +1312,10 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
                           {lojasPorRegiao.length === 0 ? (
                             <p className="text-xs text-slate-500 dark:text-slate-400">
                               Nenhuma loja cadastrada nesta região.
+                            </p>
+                          ) : lojasFiltradasVinculo.length === 0 ? (
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                              Nenhuma loja encontrada para &quot;{buscaLojaVinculo.trim()}&quot;.
                             </p>
                           ) : null}
                         </div>

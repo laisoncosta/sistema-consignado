@@ -10,7 +10,10 @@ export const portalBtnPrimarioMobile =
   "min-h-14 w-full touch-manipulation rounded-xl px-5 py-4 text-base font-semibold sm:min-h-12 sm:py-3.5 sm:text-sm";
 
 export const portalSelectMobile =
-  "min-h-12 w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 pl-10 pr-10 text-base text-slate-800 outline-none transition focus:border-transparent focus:ring-2 sm:min-h-11 sm:py-3 sm:text-sm";
+  "min-h-12 w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 pl-10 pr-10 text-base text-slate-800 outline-none transition focus:border-transparent focus:ring-2 sm:min-h-11 sm:py-3 sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
+
+export const gestaoSelectMobile =
+  "min-h-12 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-4 pr-10 text-base text-slate-800 outline-none transition focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-11 sm:py-3 sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
 
 export const portalInputQuantitativoMobile =
   "min-h-12 w-full rounded-lg border border-slate-200 bg-white px-2 py-3 text-center text-base font-semibold text-slate-800 outline-none transition focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 sm:min-h-0 sm:py-2.5 sm:text-sm";

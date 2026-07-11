@@ -4,6 +4,7 @@ import { ChevronDown, Loader2, MapPin, UserRound } from "lucide-react";
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 
 import type { BrandTheme } from "@/lib/brands";
+import { gestaoSelectMobile } from "@/lib/portal-mobile-ui";
 
 export type RegiaoResumo = {
   id: number;
@@ -37,11 +38,13 @@ export type SelecaoPortalAdmin = {
 type PortalPedidosAdminFiltrosProps = {
   brand: BrandTheme;
   onSelecaoChange: (selecao: SelecaoPortalAdmin) => void;
+  otimizadoMobile?: boolean;
 };
 
 export function PortalPedidosAdminFiltros({
   brand,
   onSelecaoChange,
+  otimizadoMobile = false,
 }: PortalPedidosAdminFiltrosProps) {
   const [regioes, setRegioes] = useState<RegiaoResumo[]>([]);
   const [promotores, setPromotores] = useState<PromotorResumo[]>([]);
@@ -250,30 +253,42 @@ export function PortalPedidosAdminFiltros({
     emitirSelecao(regiaoSelecionada, promotor, loja);
   }
 
+  const classeSelect = otimizadoMobile
+    ? gestaoSelectMobile
+    : "w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3 pl-4 pr-10 text-sm text-slate-800 outline-none transition focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
+
   return (
     <div
-      className="rounded-2xl border bg-white p-6 shadow-sm"
+      className={`rounded-2xl border bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 ${
+        otimizadoMobile ? "p-4 sm:p-6" : "p-6"
+      }`}
       style={{ borderColor: regiaoVisual.primaryLight }}
     >
-      <div className="mb-5 flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <div className="mb-5 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
         <UserRound className="h-4 w-4" style={{ color: regiaoVisual.primary }} />
         Seleção de contexto para lançamento
       </div>
 
       <div className="space-y-5">
         <div>
-          <label className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <label className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             <MapPin className="h-4 w-4" />
             Selecione a Região
           </label>
 
           {carregandoRegioes ? (
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
               Carregando regiões...
             </div>
           ) : (
-            <div className="flex flex-wrap gap-3">
+            <div
+              className={
+                otimizadoMobile
+                  ? "grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3"
+                  : "flex flex-wrap gap-3"
+              }
+            >
               {regioes.map((regiao) => {
                 const ativa = regiaoId === String(regiao.id);
 
@@ -282,7 +297,11 @@ export function PortalPedidosAdminFiltros({
                     key={regiao.id}
                     type="button"
                     onClick={() => handleRegiaoChange(String(regiao.id))}
-                    className="rounded-full px-5 py-2.5 text-sm font-semibold transition"
+                    className={`rounded-full text-sm font-semibold transition ${
+                      otimizadoMobile
+                        ? "min-h-12 touch-manipulation px-4 py-3 sm:px-5 sm:py-2.5"
+                        : "px-5 py-2.5"
+                    }`}
                     style={
                       ativa
                         ? {
@@ -305,11 +324,11 @@ export function PortalPedidosAdminFiltros({
           )}
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className={`grid gap-5 ${otimizadoMobile ? "grid-cols-1" : "md:grid-cols-2"}`}>
           <div className="relative">
             <label
               htmlFor="filtro-promotor"
-              className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
             >
               Selecione o Promotor
             </label>
@@ -318,7 +337,7 @@ export function PortalPedidosAdminFiltros({
               value={promotorId}
               onChange={(event) => handlePromotorChange(event.target.value)}
               disabled={!regiaoId || carregandoPromotores}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3 pl-4 pr-10 text-sm text-slate-800 outline-none transition focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className={classeSelect}
               style={inputRingStyle}
             >
               <option value="">
@@ -336,13 +355,17 @@ export function PortalPedidosAdminFiltros({
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-[2.35rem] h-4 w-4 text-slate-400" />
+            <ChevronDown
+              className={`pointer-events-none absolute right-3 h-4 w-4 text-slate-400 ${
+                otimizadoMobile ? "top-11" : "top-[2.35rem]"
+              }`}
+            />
           </div>
 
           <div className="relative">
             <label
               htmlFor="filtro-loja"
-              className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
             >
               Selecione a Loja
             </label>
@@ -351,7 +374,7 @@ export function PortalPedidosAdminFiltros({
               value={lojaId}
               onChange={(event) => handleLojaChange(event.target.value)}
               disabled={!promotorId || carregandoLojas || lojas.length === 0}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3 pl-4 pr-10 text-sm text-slate-800 outline-none transition focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className={classeSelect}
               style={inputRingStyle}
             >
               <option value="">
@@ -370,16 +393,24 @@ export function PortalPedidosAdminFiltros({
               ))}
             </select>
             {carregandoLojas ? (
-              <Loader2 className="pointer-events-none absolute right-3 top-[2.35rem] h-4 w-4 animate-spin text-slate-400" />
+              <Loader2
+                className={`pointer-events-none absolute right-3 h-4 w-4 animate-spin text-slate-400 ${
+                  otimizadoMobile ? "top-11" : "top-[2.35rem]"
+                }`}
+              />
             ) : (
-              <ChevronDown className="pointer-events-none absolute right-3 top-[2.35rem] h-4 w-4 text-slate-400" />
+              <ChevronDown
+                className={`pointer-events-none absolute right-3 h-4 w-4 text-slate-400 ${
+                  otimizadoMobile ? "top-11" : "top-[2.35rem]"
+                }`}
+              />
             )}
           </div>
         </div>
       </div>
 
       {erro ? (
-        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300">
           {erro}
         </p>
       ) : null}

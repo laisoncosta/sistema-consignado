@@ -282,7 +282,7 @@ export function PortalPedidosPainel({
       <div className="relative z-30">
         <PromotorNav
           brand={brandContexto}
-          otimizadoMobile={!modoGestaoAdministrativa}
+          otimizadoMobile
         />
       </div>
 
@@ -292,6 +292,7 @@ export function PortalPedidosPainel({
             <PortalPedidosAdminFiltros
               brand={brand}
               onSelecaoChange={handleSelecaoAdmin}
+              otimizadoMobile
             />
 
             {abaAtiva === "novo-pedido" && lojaSelecionadaAdmin ? (
@@ -306,11 +307,12 @@ export function PortalPedidosPainel({
                 modoAdministrador
                 regiaoId={regiaoContexto?.id}
                 promotorId={promotorContexto?.id}
+                otimizadoMobile
               />
             ) : null}
 
             {abaAtiva === "novo-pedido" && !lojaSelecionadaAdmin ? (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center text-sm text-slate-500">
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-10 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 sm:px-6">
                 Selecione a região, o promotor e a loja para visualizar a tabela
                 de lançamentos.
               </div>
@@ -323,6 +325,7 @@ export function PortalPedidosPainel({
                   promotorContexto?.email ?? emailContexto ?? usuarioEmail
                 }
                 regiaoNome={regiaoContexto?.rotulo ?? regiao}
+                otimizadoMobile
               />
             ) : null}
           </div>

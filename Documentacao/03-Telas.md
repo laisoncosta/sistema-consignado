@@ -359,6 +359,7 @@ Colunas: pedido, data/hora, promotor, loja, status, tempo em loja, farol de inte
 - Tabela: código CISS, descrição, preço unitário (cadastro interno), região, status
 - Botão **Novo Produto**
 - Barra importar/exportar **Excel**
+- **Rolagem livre da página:** cabeçalho, indicadores e filtros sobem junto com a tabela; apenas a largura da tabela usa rolagem horizontal quando necessário.
 
 ### Painel lateral — `ProdutoFormPanel`
 
@@ -405,6 +406,7 @@ Colunas: pedido, data/hora, promotor, loja, status, tempo em loja, farol de inte
 - Tabela: código CISS, nome, região, cidade, status
 - Botão **Nova Loja**
 - Importar/exportar **Excel**
+- **Rolagem livre da página:** cabeçalho, indicadores e filtros sobem junto com a tabela; apenas a largura da tabela usa rolagem horizontal quando necessário.
 
 ### Painel lateral — Cadastrar (`LojaCadastroPanel`)
 
@@ -434,6 +436,7 @@ Mesma estrutura do cadastro, com dados preenchidos e botão **Salvar e Sair**.
 - Tabela: nome, e-mail, perfil, região, status, CLT, cerca, lojas
 - Botão **Novo Usuário**
 - Importar/exportar **Excel**
+- **Rolagem livre da página:** cabeçalho, indicadores e filtros sobem junto com a tabela; apenas a largura da tabela usa rolagem horizontal quando necessário.
 
 ### Ações rápidas na linha
 - Editar

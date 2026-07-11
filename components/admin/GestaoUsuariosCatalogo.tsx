@@ -655,8 +655,8 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
 
   return (
     <>
-      <main className="mx-auto flex h-[calc(100svh-5.5rem)] w-full max-w-7xl flex-col px-6 py-3">
-        <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.06)] dark:border-slate-700 dark:bg-slate-900">
+      <main className="mx-auto w-full max-w-7xl px-6 py-3">
+        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.06)] dark:border-slate-700 dark:bg-slate-900">
           <div
             className="shrink-0 border-b px-6 py-3 sm:px-8"
             style={{
@@ -772,7 +772,7 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
             </form>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-auto">
+          <div className="overflow-x-auto">
             {carregando ? (
               <div className="flex items-center justify-center gap-2 py-16 text-slate-500 dark:text-slate-400">
                 <Loader2 className="h-5 w-5 animate-spin" />

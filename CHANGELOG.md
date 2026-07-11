@@ -1,5 +1,7 @@
 # Changelog
 
+[11/07/2026] - Ajustado: rolagem livre da página nas telas Cadastro de Produtos, Cadastro de Lojas e Gestão de Usuários e Perfis; cabeçalhos e filtros não ficam mais presos no topo.
+
 [11/07/2026] - Adicionado: campo de busca por nome na vinculação de lojas do promotor (Gestão de Usuários).
 
 [10/07/2026] - Adicionado: acesso mobile otimizado para Admin e Diretor — drawer de navegação, logout/tema no cabeçalho, portal em modo gestão com toque amigável; telas desktopOnly acessíveis no celular com aviso.

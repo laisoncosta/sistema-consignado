@@ -77,7 +77,75 @@ function BadgeStatus({
   );
 }
 
+function BlocoPedidoExtraHistorico({
+  linha,
+}: {
+  linha: LancamentoHistoricoAgrupado;
+}) {
+  if (linha.pedidoExtraSolicitado <= 0) {
+    return null;
+  }
+
+  const statusExtra: StatusHistoricoExibicaoMobile =
+    linha.statusPedidoExtra ??
+    (linha.pedidoExtraAprovado ? "Aprovado" : "Pendente");
+
+  const classeBloco =
+    statusExtra === "Reprovado"
+      ? "mt-4 rounded-xl border-2 border-rose-500 bg-rose-50/30 p-4 dark:border-rose-500 dark:bg-rose-950/30"
+      : statusExtra === "Aprovado"
+        ? "mt-4 rounded-xl border-2 border-green-500 bg-green-50/20 p-4 dark:border-green-600 dark:bg-green-950/30"
+        : "mt-4 rounded-xl border-2 border-amber-400 bg-amber-50/20 p-4 dark:border-amber-500 dark:bg-amber-950/30";
+
+  return (
+    <div className={classeBloco}>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+          Pedido Extra
+        </p>
+        <BadgeStatus status={statusExtra} />
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className={classeCelulaHistoricoMobile}>
+          <p className={classeLabelHistoricoMobile}>Pedido Extra Solicitado</p>
+          <p className={classeValorHistoricoMobile}>
+            <CelulaNumerica valor={linha.pedidoExtraSolicitado} />
+          </p>
+        </div>
+        <div className={classeCelulaHistoricoMobile}>
+          <p className={classeLabelHistoricoMobile}>Pedido Extra Atendido</p>
+          <p className={classeValorHistoricoMobile}>
+            <CelulaQuantidadeAtendida
+              status={statusExtra}
+              valor={linha.pedidoExtraAtendido}
+            />
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CelulaNumerica({ valor }: { valor: number }) {
+  return <span className="tabular-nums">{valor}</span>;
+}
+
+/** Pendente = em branco; Reprovado = 0; Aprovado = valor. */
+function CelulaQuantidadeAtendida({
+  status,
+  valor,
+}: {
+  status: StatusHistoricoExibicaoMobile | "Aprovado" | "Pendente" | "Reprovado";
+  valor: number;
+}) {
+  if (status === "Pendente") {
+    return <span className="tabular-nums text-slate-300 dark:text-slate-600">&nbsp;</span>;
+  }
+
+  if (status === "Reprovado") {
+    return <span className="tabular-nums">0</span>;
+  }
+
   return <span className="tabular-nums">{valor}</span>;
 }
 
@@ -837,25 +905,37 @@ export function HistoricoPedidos({
 
                 <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
                   {[
-                    { label: "Estoque", valor: linha.contagemEstoque },
-                    { label: "Avaria", valor: linha.avarias },
-                    { label: "Pedido Solicitado", valor: linha.qtdSolicitada },
-                    { label: "Pedido Atendido", valor: linha.qtdAtendida },
+                    { label: "Estoque", valor: linha.contagemEstoque, tipo: "fixo" as const },
+                    { label: "Avaria", valor: linha.avarias, tipo: "fixo" as const },
+                    {
+                      label: "Pedido Solicitado",
+                      valor: linha.qtdSolicitada,
+                      tipo: "fixo" as const,
+                    },
+                    {
+                      label: "Pedido Atendido",
+                      valor: linha.qtdAtendida,
+                      tipo: "atendido" as const,
+                    },
                     {
                       label: "Trocas Solicitadas",
                       valor: linha.trocasSolicitadas,
+                      tipo: "fixo" as const,
                     },
                     {
                       label: "Trocas Atendidas",
                       valor: linha.trocasAtendidas,
+                      tipo: "atendido" as const,
                     },
                     {
                       label: "Corte Pedido",
                       valor: linha.corte,
+                      tipo: "fixo" as const,
                     },
                     {
                       label: "Corte Troca",
                       valor: linha.corteTroca,
+                      tipo: "fixo" as const,
                     },
                   ].map((campo) => (
                     <div
@@ -872,37 +952,20 @@ export function HistoricoPedidos({
                             : "text-slate-900 dark:text-slate-100"
                         }`}
                       >
-                        <CelulaNumerica valor={campo.valor} />
+                        {campo.tipo === "atendido" ? (
+                          <CelulaQuantidadeAtendida
+                            status={linha.status}
+                            valor={campo.valor}
+                          />
+                        ) : (
+                          <CelulaNumerica valor={campo.valor} />
+                        )}
                       </p>
                     </div>
                   ))}
                 </div>
 
-                {linha.pedidoExtraSolicitado > 0 ? (
-                  <div className="mt-4 rounded-xl border-2 border-green-500 bg-green-50/20 p-4 dark:border-green-600 dark:bg-green-950/30">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
-                      Pedido Extra
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className={classeCelulaHistoricoMobile}>
-                        <p className={classeLabelHistoricoMobile}>
-                          Pedido Extra Solicitado
-                        </p>
-                        <p className={classeValorHistoricoMobile}>
-                          <CelulaNumerica valor={linha.pedidoExtraSolicitado} />
-                        </p>
-                      </div>
-                      <div className={classeCelulaHistoricoMobile}>
-                        <p className={classeLabelHistoricoMobile}>
-                          Pedido Extra Atendido
-                        </p>
-                        <p className={classeValorHistoricoMobile}>
-                          <CelulaNumerica valor={linha.pedidoExtraAtendido} />
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
+                <BlocoPedidoExtraHistorico linha={linha} />
 
                 {linha.qtdeTransf > 0 || linha.bonificacao > 0 ? (
                   <div className="mt-4 rounded-xl border-2 border-amber-600 bg-amber-50/20 p-4 dark:border-amber-500 dark:bg-amber-950/30">
@@ -997,7 +1060,10 @@ function LinhaHistorico({ linha }: { linha: LancamentoHistoricoAgrupado }) {
         <CelulaNumerica valor={linha.corte} />
       </td>
       <td className="px-3 py-3 text-center">
-        <CelulaNumerica valor={linha.qtdAtendida} />
+        <CelulaQuantidadeAtendida
+          status={linha.status}
+          valor={linha.qtdAtendida}
+        />
       </td>
       <td className="px-3 py-3 text-center">
         <CelulaNumerica valor={linha.avarias} />
@@ -1009,7 +1075,10 @@ function LinhaHistorico({ linha }: { linha: LancamentoHistoricoAgrupado }) {
         <CelulaNumerica valor={linha.corteTroca} />
       </td>
       <td className="px-3 py-3 text-center">
-        <CelulaNumerica valor={linha.trocasAtendidas} />
+        <CelulaQuantidadeAtendida
+          status={linha.status}
+          valor={linha.trocasAtendidas}
+        />
       </td>
       <td
         className="px-3 py-3 text-center font-bold"

@@ -69,6 +69,8 @@ export type LancamentoHistoricoAgrupado = {
   pedidoExtraSolicitado: number;
   pedidoExtraAtendido: number;
   pedidoExtraAprovado: boolean;
+  /** Status do item de pedido extra na expedição (tratado à parte). */
+  statusPedidoExtra: StatusHistoricoExibicao | null;
   qtdeTransf: number;
   bonificacao: number;
   motivo: string;
@@ -525,6 +527,39 @@ function recalcularPedidoTotalAgrupado(
   });
 }
 
+function mapearStatusPedidoExtra(
+  status: StatusHistoricoExibicao,
+): StatusHistoricoExibicao {
+  if (status === "Aprovado") {
+    return "Aprovado";
+  }
+
+  if (status === "Reprovado") {
+    return "Reprovado";
+  }
+
+  return "Pendente";
+}
+
+function priorizarStatusPedidoExtra(
+  atual: StatusHistoricoExibicao | null,
+  novo: StatusHistoricoExibicao,
+): StatusHistoricoExibicao {
+  if (!atual) {
+    return novo;
+  }
+
+  if (atual === "Pendente" || novo === "Pendente") {
+    return "Pendente";
+  }
+
+  if (atual === "Reprovado" || novo === "Reprovado") {
+    return "Reprovado";
+  }
+
+  return "Aprovado";
+}
+
 function criarLinhaAgrupadaHistorico(
   item: LancamentoHistoricoRaw,
   mesclarPedidoExtra: boolean,
@@ -538,6 +573,10 @@ function criarLinhaAgrupadaHistorico(
   const pedidoExtraAtendido =
     mesclarPedidoExtra && extraAprovado ? qtdAtendida : 0;
   const pedidoExtraAprovado = mesclarPedidoExtra && extraAprovado;
+  const statusPedidoExtra =
+    mesclarPedidoExtra && isExtra
+      ? mapearStatusPedidoExtra(item.status)
+      : null;
 
   const linha: LancamentoHistoricoAgrupado = {
     chave: "",
@@ -557,6 +596,7 @@ function criarLinhaAgrupadaHistorico(
     pedidoExtraSolicitado,
     pedidoExtraAtendido,
     pedidoExtraAprovado,
+    statusPedidoExtra,
     qtdeTransf: item.qtdeTransf,
     bonificacao: item.bonificacao,
     motivo: item.motivo,
@@ -596,6 +636,10 @@ function acumularItemHistoricoAgrupado(
 
   if (mesclarPedidoExtra && isExtra) {
     existente.pedidoExtraSolicitado += item.qtdSolicitada;
+    existente.statusPedidoExtra = priorizarStatusPedidoExtra(
+      existente.statusPedidoExtra,
+      mapearStatusPedidoExtra(item.status),
+    );
     if (item.status === "Aprovado") {
       existente.pedidoExtraAprovado = true;
       existente.pedidoExtraAtendido += item.qtdSolicitada - item.corte;

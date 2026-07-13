@@ -2142,6 +2142,9 @@ export function NovoPedido({
             <p className="text-sm text-amber-900">
               {MENSAGEM_LOCALIZACAO_IMPRESA}
             </p>
+            <p className="mt-2 text-xs text-amber-800">
+              No celular: permissões do site → Localização → Exata.
+            </p>
             <button
               type="button"
               onClick={revalidarCheckInCerca}
@@ -2152,7 +2155,9 @@ export function NovoPedido({
           </div>
         ) : null}
 
-        {uiClienteMontada && pedidoBloqueadoCerca ? (
+        {uiClienteMontada &&
+        pedidoBloqueadoCerca &&
+        !localizacaoImprecisaCerca ? (
           <div
             role="alert"
             className="mx-1 mt-6 rounded-xl border border-red-300 bg-red-50 px-4 py-5 text-center sm:mx-0"
@@ -2362,6 +2367,7 @@ export function NovoPedido({
           onConfirmar={handleConfirmarEnvio}
           confirmando={salvandoPedido}
           otimizadoMobile={otimizadoMobile}
+          modoPedidoExtra={modoLancamento === "complementar"}
         />
       ) : null}
 

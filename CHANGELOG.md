@@ -1,5 +1,7 @@
 # Changelog
 
+[13/07/2026] - Ajustado: cerca virtual reforçada (GPS obrigatório, precisão Exata, bloqueio se loja incompleta); conferência do pedido extra só com produto/quantidade; histórico com status do extra e quantidades atendidas conforme status; modais de expedição acima do cabeçalho com tipo de pedido destacado.
+
 [11/07/2026] - Ajustado: rolagem livre da página nas telas Cadastro de Produtos, Cadastro de Lojas e Gestão de Usuários e Perfis; cabeçalhos e filtros não ficam mais presos no topo.
 
 [11/07/2026] - Adicionado: campo de busca por nome na vinculação de lojas do promotor (Gestão de Usuários).

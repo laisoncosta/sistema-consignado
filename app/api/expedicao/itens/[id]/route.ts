@@ -37,6 +37,7 @@ function serializarDetalhe(item: {
   pedido: {
     id: number;
     createdAt: Date;
+    tipoLancamento: string;
     usuario: { nome: string };
     loja: { nome: string };
     regiao: { nome: string };
@@ -74,6 +75,9 @@ function serializarDetalhe(item: {
     trocaAtendidaCalculada,
   );
 
+  const tipoPedido: "Normal" | "Extra" =
+    item.pedido.tipoLancamento === "complementar" ? "Extra" : "Normal";
+
   return {
     itemPedidoId: item.id,
     pedidoId: item.pedido.id,
@@ -81,6 +85,7 @@ function serializarDetalhe(item: {
     lojaNome: item.pedido.loja.nome,
     produtoNome: item.produto.descricao,
     dataPedido: item.pedido.createdAt.toISOString(),
+    tipoPedido,
     estoque: item.estoqueConferido ?? item.estoque,
     pedidoSolicitado: item.pedidoSolicitado,
     cortePedido,

@@ -41,15 +41,25 @@ export function normalizarPerimetroCerca(valor: unknown): number {
   return Number.isFinite(numero) && numero > 0 ? numero : 0;
 }
 
-/** Triplo check: só valida GPS se promotor, loja e perímetro estiverem ativos. */
+/** Triplo check: valida GPS se o promotor tem cerca ativa (loja incompleta = bloqueio). */
 export function cercaVirtualDeveValidarGps(
   promotor: ConfigCercaVirtualPromotor,
   loja: ConfigCercaVirtualLoja,
 ): boolean {
+  void loja;
+  return promotor.cercaVirtualAtiva;
+}
+
+export function lojaCompletaParaCercaVirtual(
+  loja: ConfigCercaVirtualLoja,
+): boolean {
   return (
-    promotor.cercaVirtualAtiva &&
     loja.cercaVirtualAtiva &&
-    loja.perimetroCerca > 0
+    loja.perimetroCerca > 0 &&
+    loja.latitude != null &&
+    loja.longitude != null &&
+    Number.isFinite(loja.latitude) &&
+    Number.isFinite(loja.longitude)
   );
 }
 
@@ -90,6 +100,15 @@ export function validarPedidoCercaVirtual(params: {
     return { exigeValidacao: false, permitido: true };
   }
 
+  if (!lojaCompletaParaCercaVirtual(params.loja)) {
+    return {
+      exigeValidacao: true,
+      permitido: false,
+      erro:
+        "Esta loja ainda não possui cerca virtual completa (coordenadas e perímetro). Contate o administrador.",
+    };
+  }
+
   const latitudePromotor = params.latitude;
   const longitudePromotor = params.longitude;
 
@@ -107,25 +126,11 @@ export function validarPedidoCercaVirtual(params: {
     };
   }
 
-  if (
-    params.loja.latitude == null ||
-    params.loja.longitude == null ||
-    !Number.isFinite(params.loja.latitude) ||
-    !Number.isFinite(params.loja.longitude)
-  ) {
-    return {
-      exigeValidacao: true,
-      permitido: false,
-      erro:
-        "A loja não possui coordenadas configuradas para a cerca virtual. Contate o administrador.",
-    };
-  }
-
   const distanciaMetros = distanciaMetrosHaversine(
     latitudePromotor,
     longitudePromotor,
-    params.loja.latitude,
-    params.loja.longitude,
+    params.loja.latitude!,
+    params.loja.longitude!,
   );
 
   if (distanciaMetros > params.loja.perimetroCerca) {

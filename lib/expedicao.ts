@@ -104,6 +104,8 @@ export type ItemPedidoExpedicaoDetalhe = {
   lojaNome: string;
   produtoNome: string;
   dataPedido: string;
+  /** Extra | Normal (principal) */
+  tipoPedido: "Normal" | "Extra";
   estoque: number;
   pedidoSolicitado: number;
   cortePedido: number;
@@ -261,7 +263,7 @@ export function construirOpcoesFiltrosExpedicao(
   const tiposPedido: OpcaoFiltroDinamico[] = [];
 
   if (lancamentos.some((linha) => !linha.avulso && linha.tipoPedido === "Normal")) {
-    tiposPedido.push({ value: "normal", label: "Pedido Normal" });
+    tiposPedido.push({ value: "normal", label: "Pedido Principal" });
   }
 
   if (lancamentos.some((linha) => !linha.avulso && linha.tipoPedido === "Extra")) {
@@ -269,7 +271,7 @@ export function construirOpcoesFiltrosExpedicao(
   }
 
   if (lancamentos.some((linha) => linha.avulso)) {
-    tiposPedido.push({ value: "avulsa", label: "Transf Avulsa" });
+    tiposPedido.push({ value: "avulsa", label: "Pedido Avulso" });
   }
 
   return {
@@ -285,10 +287,20 @@ export function rotuloTipoPedidoExpedicao(
   linha: LancamentoExpedicao,
 ): string {
   if (linha.avulso) {
-    return "Transf Avulsa";
+    return "Pedido Avulso";
   }
 
-  return linha.tipoPedido === "Extra" ? "Pedido Extra" : "Pedido Normal";
+  return linha.tipoPedido === "Extra" ? "Pedido Extra" : "Pedido Principal";
+}
+
+export function rotuloTipoPedidoDetalheExpedicao(
+  tipoPedido: "Normal" | "Extra" | null | undefined,
+): string {
+  if (tipoPedido === "Extra") {
+    return "Pedido Extra";
+  }
+
+  return "Pedido Principal";
 }
 
 export function isStatusAprovadoExpedicao(status: string): boolean {

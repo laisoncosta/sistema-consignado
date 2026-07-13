@@ -2,6 +2,7 @@
 
 import { Loader2, X } from "lucide-react";
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 
 import type { BrandTheme } from "@/lib/brands";
 import type { OpcaoFiltroExpedicao } from "@/lib/expedicao";
@@ -158,8 +159,8 @@ export function TransferenciaAvulsaModal({
     return null;
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  const modal = (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <button
         type="button"
         aria-label="Fechar"
@@ -167,7 +168,7 @@ export function TransferenciaAvulsaModal({
         onClick={onFechar}
       />
 
-      <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+      <div className="relative z-[201] w-full max-w-lg rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <h3 className="text-lg font-semibold text-slate-800">
             {modoEdicao ? "Editar Transferência Avulsa" : "Transferência Avulsa"}
@@ -182,6 +183,12 @@ export function TransferenciaAvulsaModal({
         </div>
 
         <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 p-6">
+          <div className="rounded-xl border-2 border-amber-500 bg-amber-50 px-4 py-3 text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Tipo de Pedido
+            </p>
+            <p className="mt-1 text-base font-bold text-amber-900">Pedido Avulso</p>
+          </div>
           <label className="block space-y-1.5 text-sm">
             <span className="font-medium text-slate-700">Loja</span>
             <select
@@ -312,4 +319,10 @@ export function TransferenciaAvulsaModal({
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return modal;
+  }
+
+  return createPortal(modal, document.body);
 }

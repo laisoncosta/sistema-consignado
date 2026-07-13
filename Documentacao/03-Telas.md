@@ -171,6 +171,7 @@ Por linha de produto:
 - Grade **2×2** no celular para os campos digitáveis
 - Botão **Enviar** em largura total no mobile
 - Pedido extra: estoque/avaria/trocas **travados**; só pedido é editável
+- Conferência do pedido extra: lista **somente produto + quantidade digitada** (omite produtos com quantidade 0)
 
 #### Parâmetros de URL
 
@@ -194,6 +195,10 @@ Componente: `HistoricoPedidos`
 **Visão desktop:** tabela ampla agrupada por produto, loja, data e status.
 
 **Visão mobile:** cards por pedido com filtros compactos; layout adaptado ao **tema dark** (cards, filtros, badges e seções de transferência avulsa).
+
+**Pedido Extra no histórico mobile:** bloco próprio com status ao lado (**Aprovado** borda verde / **Reprovado** borda vermelha / **Pendente** borda âmbar), pois a expedição trata o extra separadamente.
+
+**Pedido Atendido / Trocas Atendidas:** em branco enquanto **Pendente**; valor quando **Aprovado**; `0` quando **Reprovado** (igual para Pedido Extra Atendido).
 
 **Campos no card mobile (transferência avulsa):** **Qtde Avulsa**, Bonificação e Motivo (quando houver).
 
@@ -258,8 +263,8 @@ Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, p
 
 | Modal | Função |
 |---|---|
-| **AprovacaoPedidoModal** | Conferir item: cortes, aprovação, reprovação, origem, bonificação |
-| **TransferenciaAvulsaModal** | Lançamento avulso (campo **Qtde Avulsa**, bonificação, motivo) |
+| **AprovacaoPedidoModal** | Conferir item: cortes, aprovação, reprovação, origem, bonificação; **tipo de pedido destacado** (Principal/Extra) acima dos dados; renderizado em portal sobre o cabeçalho (`z-index` alto) |
+| **TransferenciaAvulsaModal** | Lançamento avulso (campo **Qtde Avulsa**, bonificação, motivo); tipo **Pedido Avulso** destacado; mesmo portal sobre o cabeçalho |
 
 ---
 

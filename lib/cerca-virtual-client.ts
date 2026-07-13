@@ -10,7 +10,10 @@ export const MENSAGEM_PEDIDO_BLOQUEADO_ENVIO =
   "Pedido Bloqueado - Você precisa estar na loja para acessar o portal de pedidos";
 
 export const MENSAGEM_LOCALIZACAO_IMPRESA =
-  "Localização imprecisa. Por favor, garanta que a opção de localização 'Exato' está ativada nas permissões do seu navegador para este site.";
+  "Localização aproximada detectada. Nas permissões deste site, ative a localização 'Exata' (não 'Aproximada') e toque em Tentar Novamente.";
+
+export const MENSAGEM_LOJA_SEM_CERCA_CONFIGURADA =
+  "Esta loja ainda não possui cerca virtual completa (coordenadas e perímetro). Contate o administrador.";
 
 export const OPCOES_GPS_CERCA: PositionOptions = {
   enableHighAccuracy: true,
@@ -133,16 +136,33 @@ export function cercaConcordanciaAtiva(
   );
 }
 
-/** Só exige GPS quando ambos ativos e perímetro > 0. */
-export function cercaExigeValidacaoGps(
+/** Promotor com cerca ativa, mas loja sem coordenadas/perímetro válidos. */
+export function lojaIncompletaParaCercaPromotor(
   promotor: ConfigCercaVirtualPromotor,
   loja: ConfigCercaVirtualLoja,
 ): boolean {
-  if (!cercaConcordanciaAtiva(promotor, loja)) {
+  const promotorNormalizado = normalizarPromotorCercaCliente(promotor);
+  if (!promotorNormalizado.cercaVirtualAtiva) {
     return false;
   }
 
-  return obterPerimetroMaximo(loja) > 0;
+  const lojaNormalizada = normalizarLojaCercaCliente(loja);
+  const temCoords =
+    lojaNormalizada.latitude != null && lojaNormalizada.longitude != null;
+  const temPerimetro = obterPerimetroMaximo(lojaNormalizada) > 0;
+
+  return !(lojaNormalizada.cercaVirtualAtiva && temCoords && temPerimetro);
+}
+
+/**
+ * Exige GPS quando o promotor tem cerca ativa.
+ * Se a loja estiver incompleta, o fluxo bloqueia na validação.
+ */
+export function cercaExigeValidacaoGps(
+  promotor: ConfigCercaVirtualPromotor,
+  _loja: ConfigCercaVirtualLoja,
+): boolean {
+  return normalizarPromotorCercaCliente(promotor).cercaVirtualAtiva;
 }
 
 export function normalizarCercaVirtualApi(
@@ -353,6 +373,31 @@ export function validarEnvioDefinitivoPedido(
   config: ConfigCercaVirtualApi | null,
   coords: CoordenadasGpsCerca | null,
 ): ResultadoValidacaoEnvioDefinitivo {
+  const configNormalizada = normalizarCercaVirtualApi(config);
+
+  if (!configNormalizada?.exigeValidacao) {
+    return {
+      permitido: true,
+      precisaoInvalida: false,
+      bloqueadoCerca: false,
+      distanciaMetros: null,
+    };
+  }
+
+  const loja = configNormalizada.loja;
+
+  if (
+    lojaIncompletaParaCercaPromotor(configNormalizada.promotor, loja)
+  ) {
+    return {
+      permitido: false,
+      precisaoInvalida: false,
+      bloqueadoCerca: true,
+      distanciaMetros: null,
+      erro: MENSAGEM_LOJA_SEM_CERCA_CONFIGURADA,
+    };
+  }
+
   if (!coords) {
     return {
       permitido: false,
@@ -373,28 +418,22 @@ export function validarEnvioDefinitivoPedido(
     };
   }
 
-  const configNormalizada = normalizarCercaVirtualApi(config);
-  const loja = configNormalizada?.loja;
-  const distanciaMetros = loja
-    ? calcularDistanciaLojaMetros(coords, loja)
-    : null;
+  const distanciaMetros = calcularDistanciaLojaMetros(coords, loja);
 
-  if (configNormalizada?.exigeValidacao && loja) {
-    const avaliacao = avaliarPosicaoCercaVirtual(
-      coords.latitude,
-      coords.longitude,
-      loja,
-    );
+  const avaliacao = avaliarPosicaoCercaVirtual(
+    coords.latitude,
+    coords.longitude,
+    loja,
+  );
 
-    if (!avaliacao.dentroPerimetro) {
-      return {
-        permitido: false,
-        precisaoInvalida: false,
-        bloqueadoCerca: true,
-        distanciaMetros: avaliacao.distanciaMetros,
-        erro: MENSAGEM_PEDIDO_BLOQUEADO_ENVIO,
-      };
-    }
+  if (!avaliacao.dentroPerimetro) {
+    return {
+      permitido: false,
+      precisaoInvalida: false,
+      bloqueadoCerca: true,
+      distanciaMetros: avaliacao.distanciaMetros,
+      erro: MENSAGEM_PEDIDO_BLOQUEADO_ENVIO,
+    };
   }
 
   return {

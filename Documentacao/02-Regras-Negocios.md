@@ -156,21 +156,27 @@ Regras de bloqueio:
 
 ## 7. Cerca virtual (GPS)
 
-A validação de GPS no envio do pedido só ocorre quando **as três condições** são verdadeiras:
+A validação de GPS no envio do pedido ocorre quando o **promotor** tem cerca virtual **ativada** no cadastro.
 
-1. Promotor com cerca virtual **ativada** no cadastro
-2. Loja com cerca virtual **ativada**
-3. Loja com **perímetro** (metros) maior que zero e coordenadas configuradas
+Para liberar o pedido, a loja precisa estar completa:
+
+1. Loja com cerca virtual **ativada**
+2. Loja com **perímetro** (metros) maior que zero
+3. Loja com **coordenadas** (latitude/longitude) configuradas
+
+Se o promotor tem cerca ativa e a loja estiver incompleta, o pedido permanece **bloqueado** (não há contingência automática).
 
 ### Comportamento
 
 | Condição | Resultado |
 |---|---|
-| Triplo check desativado | Pedido segue **sem** validação de GPS |
+| Promotor sem cerca ativa | Pedido segue **sem** validação de GPS |
+| Loja incompleta (promotor com cerca) | Envio bloqueado — contatar administrador |
 | GPS indisponível | Envio bloqueado com orientação para ativar localização |
-| Loja sem coordenadas | Envio bloqueado — contatar administrador |
+| Localização aproximada (precisão > 100 m) | Bloqueado — solicitar localização **Exata** no navegador/aparelho |
 | Fora do perímetro | Envio bloqueado com distância exibida |
 | Dentro do perímetro | Pedido permitido; distância registrada no pedido |
+| Admin/Diretor no modo gestão | Sem bloqueio de cerca |
 
 ### Configuração da loja
 
@@ -180,8 +186,18 @@ A validação de GPS no envio do pedido só ocorre quando **as três condições
 
 ### Modo teste (desenvolvimento)
 
-- Flag `CHECKIN_GPS_OBRIGATORIO = false`: promotores CLT podem lançar pedidos **sem** check-in GPS obrigatório (modo teste).
+- Flag `CHECKIN_GPS_OBRIGATORIO` em `lib/pedido.ts`: quando `false`, promotores CLT lançam pedidos **sem** check-in GPS obrigatório (modo teste). Em produção/operação normal deve permanecer **`true`**.
 - Em desenvolvimento com túnel HTTPS, a cerca virtual pode ser ignorada no servidor.
+
+### Exibição no histórico do promotor (quantidades atendidas)
+
+| Status do item | Pedido Atendido / Trocas Atendidas |
+|---|---|
+| Pendente | Em branco |
+| Aprovado | Valor real |
+| Reprovado | `0` |
+
+O mesmo critério vale para **Pedido Extra Atendido**, conforme o status do extra na expedição.
 
 ---
 

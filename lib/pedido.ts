@@ -16,7 +16,7 @@ export const LOJA_PEDIDO_PADRAO = "07 - NOVA ERA - COMPENSA";
 export const LOJA_PEDIDO_PADRAO_ID = "1";
 
 /** Enquanto `false`, promotores CLT lançam pedidos sem check-in GPS (modo teste). */
-export const CHECKIN_GPS_OBRIGATORIO = false;
+export const CHECKIN_GPS_OBRIGATORIO = true;
 
 export type CamposLinhaPedido = {
   estoque: string;

@@ -2,6 +2,7 @@
 
 import { Loader2, X } from "lucide-react";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 
 import type { BrandTheme } from "@/lib/brands";
 import { extrairDataBrasil } from "@/lib/data-brasil";
@@ -9,6 +10,7 @@ import {
   formatarDataHoraBr,
   origemObrigatoriaExpedicao,
   podeExpedicaoAlterarItemPorData,
+  rotuloTipoPedidoDetalheExpedicao,
   type ItemPedidoExpedicaoDetalhe,
   type OpcaoFiltroExpedicao,
 } from "@/lib/expedicao";
@@ -251,8 +253,11 @@ export function AprovacaoPedidoModal({
     return null;
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  const tipoPedidoRotulo = rotuloTipoPedidoDetalheExpedicao(detalhe?.tipoPedido);
+  const tipoPedidoExtra = detalhe?.tipoPedido === "Extra";
+
+  const modal = (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <button
         type="button"
         aria-label="Fechar"
@@ -260,7 +265,7 @@ export function AprovacaoPedidoModal({
         onClick={onFechar}
       />
 
-      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="relative z-[201] flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <h3 className="text-lg font-semibold text-slate-800">
             Aprovação de Pedido
@@ -294,6 +299,25 @@ export function AprovacaoPedidoModal({
                   enquanto for o dia atual.
                 </div>
               ) : null}
+
+              <div
+                className={`rounded-xl border-2 px-4 py-3 text-center ${
+                  tipoPedidoExtra
+                    ? "border-emerald-500 bg-emerald-50"
+                    : "border-sky-500 bg-sky-50"
+                }`}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  Tipo de Pedido
+                </p>
+                <p
+                  className={`mt-1 text-base font-bold ${
+                    tipoPedidoExtra ? "text-emerald-800" : "text-sky-900"
+                  }`}
+                >
+                  {tipoPedidoRotulo}
+                </p>
+              </div>
 
               <div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-2">
                 <div>
@@ -590,4 +614,10 @@ export function AprovacaoPedidoModal({
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return modal;
+  }
+
+  return createPortal(modal, document.body);
 }

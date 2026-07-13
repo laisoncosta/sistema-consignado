@@ -361,14 +361,14 @@ export function AuthFlow() {
             </p>
 
             <div className="mt-6 rounded-xl bg-slate-100/80 px-4 py-3 text-xs text-slate-600">
-              <p className="font-semibold text-slate-700">Acesso de teste</p>
-              <p className="mt-1.5 leading-relaxed">
-                Manaus: <strong>promotor@teste.com</strong> · Rio Branco:{" "}
-                <strong>promotorac@teste.com</strong>
+              <p className="leading-relaxed">
+                Login: <strong>seu email</strong>
               </p>
               <p className="mt-1 leading-relaxed">
-                Contas de teste: senha <strong>teste123</strong>. Demais usuários: senha
-                inicial <strong>123456</strong> (troca obrigatória no 1º acesso).
+                Senha: <strong>123456</strong>
+              </p>
+              <p className="mt-1 leading-relaxed text-slate-500">
+                (Troca de senha obrigatória no 1º acesso)
               </p>
             </div>
           </>

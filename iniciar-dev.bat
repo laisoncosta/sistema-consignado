@@ -1,8 +1,8 @@
 @echo off
-title SHI - Servidor de Desenvolvimento
+title Sistema Consignado - Servidor de Desenvolvimento
 echo.
 echo ========================================
-echo   SHI - Sistema Hidroponico Integrado
+echo   Sistema Consignado - Desenvolvimento
 echo ========================================
 echo.
 
@@ -22,6 +22,20 @@ if errorlevel 1 (
   exit /b 1
 )
 
+if not exist "node_modules\next\dist\bin\next" (
+  echo.
+  echo Dependencias nao encontradas. Rodando npm install...
+  echo.
+  call npm install
+  if errorlevel 1 (
+    echo.
+    echo ERRO: npm install falhou. Verifique a conexao e tente novamente.
+    pause
+    popd
+    exit /b 1
+  )
+)
+
 echo.
 echo Servidor iniciando...
 echo.
@@ -32,8 +46,9 @@ echo.
 echo   IMPORTANTE: celular e PC precisam estar na MESMA rede Wi-Fi.
 echo   Nao use localhost no celular — ele so funciona no computador.
 echo.
-echo   E-mail:  promotor@teste.com  ou  promotorac@teste.com
-echo   Senha:   teste123
+echo   Login:  seu email
+echo   Senha:  123456
+echo   (Troca de senha obrigatoria no 1o acesso)
 echo.
 echo Para parar o servidor, pressione Ctrl+C
 echo.
@@ -44,7 +59,10 @@ call npm run dev
 
 if errorlevel 1 (
   echo.
-  echo ERRO ao iniciar o servidor. Verifique se a porta 3000 esta livre.
+  echo ERRO ao iniciar o servidor.
+  echo Verifique:
+  echo   1. Se node_modules existe ^(rode npm install^)
+  echo   2. Se a porta 3000 esta livre
   pause
 )
 

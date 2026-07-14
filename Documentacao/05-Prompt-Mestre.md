@@ -47,7 +47,7 @@ Dados (produtos, lojas, pedidos) pertencem a uma região. Diretor vê todas; dem
 
 ## Perfis (RBAC)
 | Perfil | Tela inicial | Acesso principal |
-| Promotor | /dashboard/portal-pedidos | Portal de pedidos, check-in GPS, histórico |
+| Promotor | /dashboard/portal-pedidos | Portal de pedidos, cerca virtual GPS, histórico |
 | Expedição | /dashboard/expedicao | Aprovação/corte, transferências avulsas |
 | Supervisor | /dashboard/supervisor | Placeholder |
 | Administrador | /dashboard/inicio | Dashboard, cadastros, relatórios da região |
@@ -88,19 +88,19 @@ Diferenças do Diretor:
 - Outros perfis (Expedição, Admin, Diretor, Supervisor) **não** passam pela trava de aparelho
 
 ## Fluxo principal do promotor
-1. Seleciona loja vinculada → check-in GPS (inicioVisitaEm)
-2. Estados da visita: Disponível → Em andamento (check-in, loja travada) → Concluído (no envio)
-3. Preenche formulário quantitativo: Estoque, Avaria, Trocas, Pedido (SEM valores em R$)
-4. Conferência → envio → status AGUARDANDO_APROVACAO
-5. Principal: 1 por loja/dia. Extra: 1 por loja/dia, só após principal (estoque/avaria/trocas travados no extra)
-6. Após principal + extra no dia, não há novo lançamento — orienta contato com Supervisor
-7. Pedido enviado é irreversível pelo promotor; itens zerados podem ser auto-aprovados na expedição
+1. Seleciona loja vinculada → validação pela **cerca virtual** (GPS Exata dentro do perímetro)
+2. Preenche formulário quantitativo: Estoque, Avaria, Trocas, Pedido (SEM valores em R$)
+3. Conferência → envio → status AGUARDANDO_APROVACAO
+4. Principal: 1 por loja/dia. Extra: 1 por loja/dia, só após principal (estoque/avaria/trocas travados no extra)
+5. Após principal + extra no dia, não há novo lançamento — orienta contato com Supervisor
+6. Pedido enviado é irreversível pelo promotor; itens zerados podem ser auto-aprovados na expedição
 
 ## Check-in e visita GPS
-- Check-in grava data/hora e coordenadas; troca de loja bloqueada durante visita
-- `inicioVisitaEm` vai no pedido; check-out coincide com o envio (`createdAt`)
-- Sem check-in: pedido pode ser enviado, mas auditoria mostra só o envio
-- Histórico de pedidos **não exige** validação de GPS/cerca virtual
+- Check-in CLT / `VisitaGpsCheckin` **desativado** no portal (`CHECKIN_GPS_OBRIGATORIO = false`)
+- Localização operacional: **somente cerca virtual**
+- `inicioVisitaEm` pode aparecer no Raio-X quando houver registro de início de visita no envio
+- Sem início de visita: auditoria mostra só o envio e eventos posteriores
+- Histórico de pedidos **não exige** validação de GPS/cerca virtual para consulta
 
 ## Cerca virtual (GPS)
 Validação quando o **promotor** tem `cercaVirtualAtiva`:
@@ -300,7 +300,7 @@ Quando em dúvida sobre regra de negócio ou tela, consulte esses arquivos antes
 | Autenticação e senha | Sim | `02-Regras-Negocios.md` §4 |
 | Cadastro público e aprovação | Sim | `02-Regras-Negocios.md` §3 |
 | Cerca virtual (promotor ativo + loja completa) | Sim | `02-Regras-Negocios.md` §7, `lib/cerca-virtual.ts` |
-| Check-in e visita GPS | Sim | `02-Regras-Negocios.md` §8 |
+| Check-in CLT (desativado) / visita | Sim | `02-Regras-Negocios.md` §7–8, `lib/pedido.ts` |
 | Número amigável do pedido | Sim | `lib/pedido-numero-amigavel.ts` |
 | Relatório de Visita / Raio-X | Sim | `03-Telas.md` §7, `lib/relatorio-visitas.ts` |
 | Exclusão e restauração (Diretor) | Sim | `app/api/admin/pedidos/[id]/excluir`, `restaurar` |

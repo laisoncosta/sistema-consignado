@@ -1,5 +1,7 @@
 # Changelog
 
+[14/07/2026] - Documentado: check-in CLT desativado em todos os docs; portal usa apenas cerca virtual para liberar pedido.
+
 [14/07/2026] - Removido: bloqueio de check-in CLT no portal de pedidos; localização passa a depender só da cerca virtual (mensagem "Área Bloqueada" removida).
 
 [13/07/2026] - Ajustado: cerca virtual reforçada (GPS obrigatório, precisão Exata, bloqueio se loja incompleta); conferência do pedido extra só com produto/quantidade; histórico com status do extra e quantidades atendidas conforme status; modais de expedição acima do cabeçalho com tipo de pedido destacado.

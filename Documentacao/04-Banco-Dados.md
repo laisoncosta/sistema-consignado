@@ -23,7 +23,7 @@ Este documento descreve o **modelo de dados** do sistema: tabelas, relacionament
 | `TransferenciaAvulsa` | Lançamentos avulsos da expedição |
 | `LogPedidoExpedicao` | Histórico de ações na expedição |
 | `LogAuditoria` | Auditoria de cadastros admin |
-| `LogCheckIn` | Registro de check-in do promotor |
+| `LogCheckIn` | Registro legado de check-in (fluxo CLT desativado no portal) |
 | `ControlePedidoLojaDia` | Controle diário principal/extra por loja |
 | `TokenRecuperacaoSenha` | Tokens de redefinição de senha |
 

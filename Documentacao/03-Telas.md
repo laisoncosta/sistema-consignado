@@ -148,7 +148,7 @@ Componente principal: `NovoPedido`
 |---|---|
 | 1 | Dropdown **Selecione a Loja Atual** (lojas vinculadas ao cadastro) |
 | 2 | Validação **GPS / cerca virtual** (quando ativa para promotor e loja). Check-in CLT **não é usado**. |
-| 3 | Alertas: fora do perímetro, localização imprecisa, área bloqueada (CLT sem check-in) |
+| 3 | Alertas: fora do perímetro, localização imprecisa (pedir GPS **Exata**) |
 | 4 | Botão **"+ Novo Pedido"** (caixa tracejada verde) |
 | 5 | Formulário quantitativo por produto |
 | 6 | Modal de **Conferência** antes do envio |
@@ -531,7 +531,7 @@ Telas `desktopOnly` exibem aviso em telas pequenas, mas o conteúdo permanece ac
 ```
 PROMOTOR
   └── Portal de Pedidos (/dashboard/portal-pedidos)
-        ├── Aba Pedidos (check-in → formulário → conferência → envio)
+        ├── Aba Pedidos (seleciona loja → cerca virtual → formulário → conferência → envio)
         └── Aba Histórico (?aba=historico)
 
 EXPEDIÇÃO

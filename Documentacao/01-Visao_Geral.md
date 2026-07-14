@@ -16,7 +16,7 @@ O sistema cobre o ciclo principal:
 
 | Perfil | Função principal | Tela inicial após login |
 |---|---|---|
-| **Promotor** | Visitas em lojas, check-in GPS, lançamento de pedidos | Portal de Pedidos |
+| **Promotor** | Visitas em lojas, lançamento de pedidos com cerca virtual | Portal de Pedidos |
 | **Expedição** | Aprovação e conferência de pedidos, transferências avulsas | Painel de Expedição |
 | **Supervisor** | Acompanhamento operacional da região | Dashboard Supervisor |
 | **Administrador** | Cadastros, usuários, relatórios e configurações | Dashboard Início |

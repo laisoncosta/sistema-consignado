@@ -204,7 +204,9 @@ O mesmo critério vale para **Pedido Extra Atendido**, conforme o status do extr
 
 ## 8. Visita e check-in GPS
 
-Fluxo do promotor na loja:
+> **Situação atual:** o check-in obrigatório por vínculo CLT está **desativado** (`CHECKIN_GPS_OBRIGATORIO = false`). No portal, a liberação do pedido depende da **cerca virtual**. O campo `inicioVisitaEm` pode continuar sendo preenchido quando houver registro de início de visita no fluxo de envio/auditoria.
+
+Fluxo legado de estados da visita (componente `VisitaGpsCheckin`, não usado no portal enquanto a flag estiver `false`):
 
 | Estado | Comportamento |
 |---|---|
@@ -216,13 +218,12 @@ Fluxo do promotor na loja:
 
 | Marco | Quando é gravado | Onde fica salvo |
 |---|---|---|
-| **Check-in** | Ao iniciar a visita na loja (GPS) | Enviado com o pedido no campo `inicioVisitaEm` |
+| **Check-in / início de visita** | Se houver registro de entrada na loja | Campo `inicioVisitaEm` do pedido |
 | **Envio do pedido** | Ao confirmar e enviar o lançamento | `createdAt` do pedido |
 | **Check-out** | No momento do envio do pedido | Mesmo horário do envio (`createdAt`) |
 
-- O check-in captura geolocalização real do aparelho.
-- Se o promotor **não fez check-in**, o pedido pode ser enviado sem `inicioVisitaEm` — nesse caso a auditoria mostra apenas o envio.
-- Histórico de pedidos **não exige** validação de GPS/cerca virtual.
+- Sem `inicioVisitaEm`, a auditoria (Raio-X) mostra o envio e os eventos posteriores.
+- Histórico de pedidos **não exige** validação de GPS/cerca virtual para consulta.
 
 ---
 

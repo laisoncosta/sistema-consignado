@@ -147,7 +147,7 @@ Componente principal: `NovoPedido`
 | Etapa | O que aparece na tela |
 |---|---|
 | 1 | Dropdown **Selecione a Loja Atual** (lojas vinculadas ao cadastro) |
-| 2 | Validação **GPS / cerca virtual** (quando ativa para promotor e loja) |
+| 2 | Validação **GPS / cerca virtual** (quando ativa para promotor e loja). Check-in CLT **não é usado**. |
 | 3 | Alertas: fora do perímetro, localização imprecisa, área bloqueada (CLT sem check-in) |
 | 4 | Botão **"+ Novo Pedido"** (caixa tracejada verde) |
 | 5 | Formulário quantitativo por produto |

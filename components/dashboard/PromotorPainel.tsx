@@ -8,7 +8,11 @@ import { NovoPedido, type TipoContrato } from "@/components/dashboard/NovoPedido
 import { PromotorNav } from "@/components/dashboard/PromotorNav";
 import { VisitaGpsCheckin } from "@/components/dashboard/VisitaGpsCheckin";
 import type { BrandTheme } from "@/lib/brands";
-import { LOJA_PEDIDO_PADRAO, LOJA_PEDIDO_PADRAO_ID } from "@/lib/pedido";
+import {
+  CHECKIN_GPS_OBRIGATORIO,
+  LOJA_PEDIDO_PADRAO,
+  LOJA_PEDIDO_PADRAO_ID,
+} from "@/lib/pedido";
 import { obterAbaPortal } from "@/lib/portal-navigation";
 import {
   montarTituloBoasVindas,
@@ -65,7 +69,8 @@ export function PromotorPainel({
             {TEXTO_ORIENTACAO_BOAS_VINDAS}
           </p>
 
-          {tipoContrato === "CLT" &&
+          {CHECKIN_GPS_OBRIGATORIO &&
+          tipoContrato === "CLT" &&
           abaAtiva === "novo-pedido" &&
           !ignorarGeolocalizacao ? (
             <VisitaGpsCheckin

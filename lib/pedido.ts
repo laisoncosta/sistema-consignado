@@ -15,8 +15,11 @@ export const PRODUTOS_PEDIDO_MOCK: ProdutoPedido[] = [
 export const LOJA_PEDIDO_PADRAO = "07 - NOVA ERA - COMPENSA";
 export const LOJA_PEDIDO_PADRAO_ID = "1";
 
-/** Enquanto `false`, promotores CLT lançam pedidos sem check-in GPS (modo teste). */
-export const CHECKIN_GPS_OBRIGATORIO = true;
+/**
+ * Check-in de visita CLT (VisitaGpsCheckin) desativado.
+ * Controle de localização fica só com a cerca virtual no portal.
+ */
+export const CHECKIN_GPS_OBRIGATORIO = false;
 
 export type CamposLinhaPedido = {
   estoque: string;

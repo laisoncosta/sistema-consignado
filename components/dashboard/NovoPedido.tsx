@@ -21,6 +21,7 @@ import {
 import {
   criarLinhasComplementares,
   criarLinhasPedidoIniciais,
+  CHECKIN_GPS_OBRIGATORIO,
   LOJA_PEDIDO_PADRAO,
   MENSAGEM_VALOR_NEGATIVO,
   STATUS_PEDIDO_AGUARDANDO,
@@ -898,6 +899,7 @@ export function NovoPedido({
   }, [cercaConfig]);
   const pedidoLiberado =
     modoAdministrador ||
+    !CHECKIN_GPS_OBRIGATORIO ||
     ignorarGeolocalizacao ||
     tipoContrato === "MEI" ||
     statusVisita === "em_andamento";
@@ -2083,16 +2085,6 @@ export function NovoPedido({
           >
             Nenhuma loja vinculada ao seu cadastro. Solicite ao administrador a
             liberação de PDVs.
-          </div>
-        ) : null}
-
-        {tipoContrato === "CLT" && !pedidoLiberado && !ignorarGeolocalizacao ? (
-          <div
-            className="mx-1 mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:mx-0"
-            role="alert"
-          >
-            🔒 Área Bloqueada: Promotores CLT precisam realizar o Check-in na
-            loja antes de iniciar um pedido.
           </div>
         ) : null}
 

@@ -184,10 +184,11 @@ Se o promotor tem cerca ativa e a loja estiver incompleta, o pedido permanece **
 - Número do endereço dispara geocodificação para obter latitude/longitude.
 - Perímetro da cerca é informado em metros no cadastro da loja.
 
-### Modo teste (desenvolvimento)
+### Modo check-in CLT
 
-- Flag `CHECKIN_GPS_OBRIGATORIO` em `lib/pedido.ts`: quando `false`, promotores CLT lançam pedidos **sem** check-in GPS obrigatório (modo teste). Em produção/operação normal deve permanecer **`true`**.
-- Em desenvolvimento com túnel HTTPS, a cerca virtual pode ser ignorada no servidor.
+- Flag `CHECKIN_GPS_OBRIGATORIO` em `lib/pedido.ts` está **`false`**: o check-in de visita CLT **não é mais usado**.
+- Localização no portal depende **somente da cerca virtual** (promotor + loja completa + GPS Exata dentro do perímetro).
+- O campo **Vínculo CLT** no cadastro permanece (histórico/administrativo), mas **não bloqueia** mais o lançamento.
 
 ### Exibição no histórico do promotor (quantidades atendidas)
 

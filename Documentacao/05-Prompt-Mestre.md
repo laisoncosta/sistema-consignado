@@ -118,8 +118,10 @@ Configuração da loja (cadastro):
 - Número do endereço dispara geocodificação → latitude/longitude
 - Perímetro da cerca em metros no painel da loja
 
-Check-in GPS:
-- `CHECKIN_GPS_OBRIGATORIO` em `lib/pedido.ts` deve ser **`true`** em operação (quando `false`, CLT lança sem check-in — só para teste)
+Check-in GPS / vínculo CLT:
+- `CHECKIN_GPS_OBRIGATORIO` em `lib/pedido.ts` está **`false`**: check-in CLT desativado
+- Controle de localização no portal: **somente cerca virtual**
+- Campo Vínculo CLT no cadastro não bloqueia pedido
 
 ## Número amigável do pedido
 - Cada pedido recebe `numeroAmigavel` sequencial único no banco

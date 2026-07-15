@@ -456,8 +456,8 @@ Mesma estrutura do cadastro, com dados preenchidos e botão **Salvar e Sair**.
 ### Ações rápidas na linha
 - Editar
 - Resetar senha (volta para senha inicial + troca obrigatória)
-- Resetar aparelho vinculado
-- Indicadores: aparelho cadastrado, trava ignorada
+- Resetar aparelho vinculado (**somente Promotor**)
+- Indicadores: aparelho cadastrado, trava ignorada (**somente Promotor**)
 
 ### Painel lateral (drawer) — cadastro/edição
 
@@ -471,9 +471,11 @@ Mesma estrutura do cadastro, com dados preenchidos e botão **Salvar e Sair**.
 | Perfil | Promotor, Expedição, Supervisor, ADM, Diretor |
 | Região | Filial de atuação; Diretor pode ter acesso a todas |
 | Status | Ativo, Pendente, Inativo |
-| Ignorar trava de aparelho | Libera login em qualquer dispositivo |
-| Cerca virtual | Ativar / Inativar (promotores) |
-| Lojas vinculadas | Multi-seleção — rota do promotor (somente perfil Promotor); campo de **busca por nome** filtra a lista em tempo real |
+| Trava de aparelho | Reset, status do aparelho e **Ignorar trava (emergência)** — **somente perfil Promotor** |
+| Cerca virtual | Ativar / Inativar — **somente perfil Promotor** |
+| Lojas vinculadas | Multi-seleção — rota do promotor (**somente perfil Promotor**); campo de **busca por nome** filtra a lista em tempo real |
+
+Ao salvar usuário com perfil diferente de Promotor, `deviceId` e `ignorarTravaAparelho` são limpos automaticamente.
 
 ---
 

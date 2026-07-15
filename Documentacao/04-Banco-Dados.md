@@ -150,8 +150,8 @@ Usuários do sistema (todos os perfis).
 | `codCiss` | String? | Código CISS opcional |
 | `clt` | Boolean | Promotor CLT (regras de cerca) |
 | `cercaVirtualAtiva` | Boolean | Cerca ativa para este promotor |
-| `deviceId` | String? | Aparelho vinculado (trava de login) |
-| `ignorarTravaAparelho` | Boolean | Libera login em qualquer aparelho |
+| `deviceId` | String? | Aparelho vinculado (trava de login — **somente Promotor**) |
+| `ignorarTravaAparelho` | Boolean | Libera login em qualquer aparelho (**somente Promotor**) |
 | `statusConta` | String | Ativo, Pendente, Inativo |
 | `ativo` | Boolean | Conta ativa |
 | `alterarSenhaObrigatorio` | Boolean | Força troca no próximo login |

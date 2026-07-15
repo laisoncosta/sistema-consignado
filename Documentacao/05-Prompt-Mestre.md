@@ -82,9 +82,10 @@ Diferenças do Diretor:
 - Usuário sem aparelho vinculado → primeiro login **vincula** automaticamente
 - Aparelho diferente do cadastrado → login **bloqueado** (403)
 - Mensagem: "Aparelho não autorizado para este usuário. Entre em contato com a Diretoria."
-- `ignorarTravaAparelho = true` no cadastro → trava desativada para aquele usuário
-- Admin/Diretor resetam aparelho em Gestão de Usuários (`/api/admin/usuarios/[id]/reset-aparelho`)
-- Campos em `Usuario`: `deviceId`, `ignorarTravaAparelho`
+- `ignorarTravaAparelho = true` no cadastro → trava desativada para aquele promotor
+- UI e API de reset/trava **somente** para perfil Promotor (`GestaoUsuariosCatalogo`, `/api/admin/usuarios/[id]/reset-aparelho`)
+- Ao mudar perfil para outro que não Promotor: `deviceId = null` e `ignorarTravaAparelho = false`
+- Campos em `Usuario`: `deviceId`, `ignorarTravaAparelho` (efetivos só para Promotor)
 - Outros perfis (Expedição, Admin, Diretor, Supervisor) **não** passam pela trava de aparelho
 
 ## Fluxo principal do promotor

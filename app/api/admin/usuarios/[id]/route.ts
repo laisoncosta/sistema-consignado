@@ -171,9 +171,10 @@ export async function PATCH(request: Request, context: RouteContext) {
           )
         : false;
     const ignorarTravaAparelho =
-      body.ignorarTravaAparelho !== undefined
+      perfil === "Promotor" &&
+      (body.ignorarTravaAparelho !== undefined
         ? Boolean(body.ignorarTravaAparelho)
-        : existente.ignorarTravaAparelho;
+        : existente.ignorarTravaAparelho);
     const status = (body.status ?? existente.statusConta) as StatusContaUsuario;
     const acessoTodasRegioes =
       perfil === "Diretor" &&
@@ -277,6 +278,7 @@ export async function PATCH(request: Request, context: RouteContext) {
           codCiss: codCiss || null,
           clt,
           cercaVirtualAtiva,
+          deviceId: perfil === "Promotor" ? existente.deviceId : null,
           ignorarTravaAparelho,
           statusConta: status,
           ativo: statusParaAtivo(status),

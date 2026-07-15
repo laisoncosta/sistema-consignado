@@ -1156,7 +1156,9 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
                   ) : null}
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-100/80 p-4 dark:border-slate-600 dark:bg-slate-800/60">
+                {formulario.perfil === "Promotor" ? (
+                  <>
+                  <div className="rounded-xl border border-slate-200 bg-slate-100/80 p-4 dark:border-slate-600 dark:bg-slate-800/60">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
@@ -1223,10 +1225,7 @@ export function GestaoUsuariosCatalogo({ brand }: GestaoUsuariosCatalogoProps) {
                       </span>
                     </span>
                   </label>
-                </div>
-
-                {formulario.perfil === "Promotor" ? (
-                  <>
+                  </div>
                     <div>
                       <label className={classeLabelDrawer}>
                         Cerca Virtual

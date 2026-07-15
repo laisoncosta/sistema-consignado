@@ -1,5 +1,7 @@
 # Changelog
 
+[15/07/2026] - Ajustado: trava de aparelho (Device ID) restrita ao perfil **Promotor** — ADM, Diretor, Expedição e Supervisor não passam pela validação; controles de reset/trava só aparecem no cadastro de Promotor; ao mudar o perfil, `deviceId` e exceção emergencial são limpos.
+
 [15/07/2026] - Ajustado: filtros em cascata na Expedição (loja por promotor; produto e status só do que está na tela); botão **Imprimir Romaneio** (só com promotor e loja definidos) ao lado do Status; **Exportar Excel** com visual verde; Relatório de Visita com promotor antes da loja, filtros dependentes e cards de região na ordem Todos → Rio Branco → Manaus.
 
 [14/07/2026] - Documentado: check-in CLT desativado em todos os docs; portal usa apenas cerca virtual para liberar pedido.

@@ -25,11 +25,18 @@ export async function POST(_request: Request, context: RouteContext) {
   try {
     const existente = await prisma.usuario.findUnique({
       where: { id: usuarioId },
-      select: { id: true },
+      select: { id: true, funcao: true },
     });
 
     if (!existente) {
       return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
+    }
+
+    if (existente.funcao.trim().toLowerCase() !== "promotor") {
+      return NextResponse.json(
+        { error: "A trava de aparelho é exclusiva do perfil Promotor." },
+        { status: 400 },
+      );
     }
 
     await resetarAparelhoUsuario(usuarioId);

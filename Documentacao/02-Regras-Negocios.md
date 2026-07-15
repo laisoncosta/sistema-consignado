@@ -103,17 +103,18 @@ Usuário **Pendente não consegue fazer login** até ser aprovado.
 
 ## 5. Trava de aparelho (device ID)
 
-Regra gradual aplicada no login de promotores:
+Regra **exclusiva do perfil Promotor** — Expedição, Supervisor, ADM e Diretor **não** passam pela validação de aparelho no login.
 
 | Situação | Comportamento |
 |---|---|
-| Usuário sem aparelho vinculado | Primeiro login **vincula** o aparelho automaticamente |
-| Aparelho diferente do cadastrado | Login **bloqueado** |
-| `ignorarTravaAparelho = true` | Trava desativada para aquele usuário |
+| Perfil diferente de Promotor | Login liberado em qualquer aparelho; `deviceId` e `ignorarTravaAparelho` não se aplicam |
+| Promotor sem aparelho vinculado | Primeiro login **vincula** o aparelho automaticamente |
+| Promotor com aparelho diferente do cadastrado | Login **bloqueado** |
+| Promotor com `ignorarTravaAparelho = true` | Trava desativada para aquele usuário |
 
 Mensagem de bloqueio: *"Aparelho não autorizado para este usuário. Entre em contato com a Diretoria."*
 
-Administrador pode **resetar o aparelho** vinculado para liberar novo dispositivo.
+Na **Gestão de Usuários**, reset de aparelho e exceção emergencial aparecem **somente** para perfil Promotor. Ao alterar o perfil para outro, o sistema limpa `deviceId` e desativa `ignorarTravaAparelho`.
 
 ---
 
@@ -353,8 +354,8 @@ Regras:
 
 - Perfis disponíveis: Promotor, Expedição, Supervisor, ADM, Diretor.
 - Status: **Ativo**, **Pendente** ou **Inativo**.
-- Promotor pode ter flag **CLT** e **cerca virtual** individual.
-- Administrador pode liberar trava de aparelho por usuário.
+- Promotor pode ter flag **CLT**, **cerca virtual** individual e **trava de aparelho** (Device ID).
+- Expedição, Supervisor, ADM e Diretor **não** usam trava de aparelho.
 
 ### Origens de saída
 

@@ -87,6 +87,7 @@ export type OpcoesFiltrosExpedicaoDinamicas = {
   produtos: OpcaoFiltroDinamico[];
   origens: OpcaoFiltroDinamico[];
   tiposPedido: OpcaoFiltroDinamico[];
+  status: OpcaoFiltroDinamico[];
 };
 
 export type LogExpedicaoItem = {
@@ -216,9 +217,53 @@ export function filtrarLancamentosExpedicao(
   });
 }
 
+const ROTULO_STATUS_FILTRO: Record<
+  Exclude<StatusExpedicaoFiltro, "todos">,
+  string
+> = {
+  pendente: "Pendente",
+  aprovado: "Aprovado",
+  reprovado: "Reprovado",
+};
+
+function valorFiltroStatusExpedicao(
+  status: StatusExpedicaoExibicao,
+): Exclude<StatusExpedicaoFiltro, "todos"> {
+  if (status === "Aprovado") {
+    return "aprovado";
+  }
+
+  if (status === "Reprovado") {
+    return "reprovado";
+  }
+
+  return "pendente";
+}
+
+function coletarOpcoesMapa(
+  linhas: LancamentoExpedicao[],
+  extrair: (linha: LancamentoExpedicao) => [string, string] | null,
+): OpcaoFiltroDinamico[] {
+  const mapa = new Map<string, string>();
+
+  for (const linha of linhas) {
+    const entrada = extrair(linha);
+    if (entrada) {
+      mapa.set(entrada[0], entrada[1]);
+    }
+  }
+
+  return Array.from(mapa.entries())
+    .sort(([, a], [, b]) => a.localeCompare(b, "pt-BR"))
+    .map(([value, label]) => ({ value, label }));
+}
+
 export function construirOpcoesFiltrosExpedicao(
   lancamentos: LancamentoExpedicao[],
+  filtros?: FiltrosExpedicao,
 ): OpcoesFiltrosExpedicaoDinamicas {
+  const filtrosAtivos = filtros ?? filtrosExpedicaoIniciais();
+
   const promotores = Array.from(
     new Set(
       lancamentos
@@ -229,36 +274,52 @@ export function construirOpcoesFiltrosExpedicao(
     .sort((a, b) => a.localeCompare(b, "pt-BR"))
     .map((nome) => ({ value: nome, label: nome }));
 
-  const lojasMap = new Map<string, string>();
-  const produtosMap = new Map<string, string>();
-  const origensMap = new Map<string, string>();
+  // Lojas do promotor selecionado (pedidos dele no período); sem promotor = todas.
+  const linhasParaLojas = filtrosAtivos.promotorId
+    ? lancamentos.filter(
+        (linha) =>
+          !linha.avulso && linha.promotorNome === filtrosAtivos.promotorId,
+      )
+    : lancamentos;
 
-  for (const linha of lancamentos) {
-    if (linha.codLoja && linha.loja) {
-      lojasMap.set(linha.codLoja, linha.loja);
-    }
+  const lojas = coletarOpcoesMapa(linhasParaLojas, (linha) =>
+    linha.codLoja && linha.loja ? [linha.codLoja, linha.loja] : null,
+  );
 
-    if (linha.codProduto && linha.produto) {
-      produtosMap.set(linha.codProduto, linha.produto);
-    }
+  // Produtos/status: só o que aparece na tela com os demais filtros aplicados.
+  const linhasParaProdutos = filtrarLancamentosExpedicao(lancamentos, {
+    ...filtrosAtivos,
+    produtoId: "",
+  });
 
+  const produtos = coletarOpcoesMapa(linhasParaProdutos, (linha) =>
+    linha.codProduto && linha.produto
+      ? [linha.codProduto, linha.produto]
+      : null,
+  );
+
+  const linhasParaStatus = filtrarLancamentosExpedicao(lancamentos, {
+    ...filtrosAtivos,
+    status: "todos",
+  });
+
+  const statusPresentes = new Set(
+    linhasParaStatus.map((linha) => valorFiltroStatusExpedicao(linha.status)),
+  );
+
+  const status: OpcaoFiltroDinamico[] = (
+    ["pendente", "aprovado", "reprovado"] as const
+  )
+    .filter((valor) => statusPresentes.has(valor))
+    .map((valor) => ({
+      value: valor,
+      label: ROTULO_STATUS_FILTRO[valor],
+    }));
+
+  const origens = coletarOpcoesMapa(lancamentos, (linha) => {
     const origemChave = chaveOrigemExpedicao(linha);
-    if (origemChave && linha.origem) {
-      origensMap.set(origemChave, linha.origem);
-    }
-  }
-
-  const lojas = Array.from(lojasMap.entries())
-    .sort(([, a], [, b]) => a.localeCompare(b, "pt-BR"))
-    .map(([value, label]) => ({ value, label }));
-
-  const produtos = Array.from(produtosMap.entries())
-    .sort(([, a], [, b]) => a.localeCompare(b, "pt-BR"))
-    .map(([value, label]) => ({ value, label }));
-
-  const origens = Array.from(origensMap.entries())
-    .sort(([, a], [, b]) => a.localeCompare(b, "pt-BR"))
-    .map(([value, label]) => ({ value, label }));
+    return origemChave && linha.origem ? [origemChave, linha.origem] : null;
+  });
 
   const tiposPedido: OpcaoFiltroDinamico[] = [];
 
@@ -280,6 +341,7 @@ export function construirOpcoesFiltrosExpedicao(
     produtos,
     origens,
     tiposPedido,
+    status,
   };
 }
 

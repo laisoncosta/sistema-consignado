@@ -88,9 +88,9 @@ const BOTOES_REGIAO_DIRETOR: Array<{
   value: FiltroRegiaoRelatorio;
   label: string;
 }> = [
+  { value: "todos", label: "Todos" },
   { value: "rio-branco", label: "Rio Branco" },
   { value: "manaus", label: "Manaus" },
-  { value: "todos", label: "Todas" },
 ];
 
 function obterPrimeiroDiaMesAtual(): string {
@@ -292,14 +292,30 @@ export function RelatorioVisitasPainel({
     [registrosNaTela],
   );
 
+  const registrosAposPromotor = useMemo(
+    () =>
+      filtrarRegistrosRelatorioVisitas(registrosNaTela, {
+        promotorId: promotorFiltro || undefined,
+      }),
+    [promotorFiltro, registrosNaTela],
+  );
+
   const opcoesLoja = useMemo(
-    () => montarOpcoesLoja(registrosNaTela),
-    [registrosNaTela],
+    () => montarOpcoesLoja(registrosAposPromotor),
+    [registrosAposPromotor],
+  );
+
+  const registrosAposPromotorLoja = useMemo(
+    () =>
+      filtrarRegistrosRelatorioVisitas(registrosAposPromotor, {
+        lojaId: lojaFiltro || undefined,
+      }),
+    [lojaFiltro, registrosAposPromotor],
   );
 
   const opcoesIntegridade = useMemo(
-    () => montarOpcoesIntegridade(registrosNaTela),
-    [registrosNaTela],
+    () => montarOpcoesIntegridade(registrosAposPromotorLoja),
+    [registrosAposPromotorLoja],
   );
 
   useEffect(() => {
@@ -307,6 +323,10 @@ export function RelatorioVisitasPainel({
     setLojaFiltro("");
     setIntegridadeFiltro("todos");
   }, [regiaoFiltro, dataInicial, dataFinal]);
+
+  useEffect(() => {
+    setLojaFiltro("");
+  }, [promotorFiltro]);
 
   useEffect(() => {
     if (
@@ -334,19 +354,17 @@ export function RelatorioVisitasPainel({
 
   const registrosFiltrados = useMemo(
     () =>
-      filtrarRegistrosRelatorioVisitas(registrosNaTela, {
-        promotorId: promotorFiltro || undefined,
-        lojaId: lojaFiltro || undefined,
+      filtrarRegistrosRelatorioVisitas(registrosAposPromotorLoja, {
         integridade: integridadeFiltro,
         buscaPedido,
       }),
-    [buscaPedido, integridadeFiltro, lojaFiltro, promotorFiltro, registrosNaTela],
+    [buscaPedido, integridadeFiltro, registrosAposPromotorLoja],
   );
 
   const opcoesBuscaPedido = useMemo(() => {
     const termo = buscaPedido.trim().toLowerCase().replace(/^#/, "");
 
-    return registrosNaTela
+    return registrosAposPromotorLoja
       .filter((registro) => {
         if (!termo) {
           return true;
@@ -374,7 +392,7 @@ export function RelatorioVisitasPainel({
           detalhe: `${statusVisita.texto} · ${registro.lojaRotulo} · ${registro.promotorNome}`,
         };
       });
-  }, [buscaPedido, registrosNaTela]);
+  }, [buscaPedido, registrosAposPromotorLoja]);
 
   useEffect(() => {
     function fecharBuscaPedido(event: MouseEvent) {
@@ -619,28 +637,6 @@ export function RelatorioVisitasPainel({
             />
           </div>
 
-          {opcoesLoja.length > 0 ? (
-            <div>
-              <label htmlFor="relatorio-loja" className={classeLabel}>
-                Loja
-              </label>
-              <select
-                id="relatorio-loja"
-                value={lojaFiltro}
-                onChange={(event) => setLojaFiltro(event.target.value)}
-                className={classeSelect}
-                style={inputRingStyle}
-              >
-                <option value="">Todas</option>
-                {opcoesLoja.map((loja) => (
-                  <option key={loja.value} value={loja.value}>
-                    {loja.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
-
           {opcoesPromotor.length > 0 ? (
             <div>
               <label htmlFor="relatorio-promotor" className={classeLabel}>
@@ -657,6 +653,28 @@ export function RelatorioVisitasPainel({
                 {opcoesPromotor.map((promotor) => (
                   <option key={promotor.value} value={promotor.value}>
                     {promotor.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+
+          {opcoesLoja.length > 0 ? (
+            <div>
+              <label htmlFor="relatorio-loja" className={classeLabel}>
+                Loja
+              </label>
+              <select
+                id="relatorio-loja"
+                value={lojaFiltro}
+                onChange={(event) => setLojaFiltro(event.target.value)}
+                className={classeSelect}
+                style={inputRingStyle}
+              >
+                <option value="">Todas</option>
+                {opcoesLoja.map((loja) => (
+                  <option key={loja.value} value={loja.value}>
+                    {loja.label}
                   </option>
                 ))}
               </select>

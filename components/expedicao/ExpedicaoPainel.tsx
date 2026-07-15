@@ -521,9 +521,11 @@ export function ExpedicaoPainel({
   }, [carregarLancamentosOriginais]);
 
   const opcoesFiltros = useMemo(
-    () => construirOpcoesFiltrosExpedicao(todosLancamentos),
-    [todosLancamentos],
+    () => construirOpcoesFiltrosExpedicao(todosLancamentos, filtros),
+    [todosLancamentos, filtros],
   );
+
+  const podeImprimirRomaneio = Boolean(filtros.promotorId && filtros.lojaId);
 
   const lancamentos = useMemo(
     () => filtrarLancamentosExpedicao(todosLancamentos, filtros),
@@ -591,6 +593,14 @@ export function ExpedicaoPainel({
         !opcoesFiltros.tiposPedido.some((opcao) => opcao.value === atual.tipoPedido)
       ) {
         proximo = { ...proximo, tipoPedido: "todos" };
+        alterou = true;
+      }
+
+      if (
+        atual.status !== "todos" &&
+        !opcoesFiltros.status.some((opcao) => opcao.value === atual.status)
+      ) {
+        proximo = { ...proximo, status: "todos" };
         alterou = true;
       }
 
@@ -1105,11 +1115,35 @@ export function ExpedicaoPainel({
                   style={inputRingStyle}
                 >
                   <option value="todos">Todos</option>
-                  <option value="pendente">Pendente</option>
-                  <option value="aprovado">Aprovado</option>
-                  <option value="reprovado">Reprovado</option>
+                  {opcoesFiltros.status.map((status) => (
+                    <option key={status.value} value={status.value}>
+                      {status.label}
+                    </option>
+                  ))}
                 </select>
               </label>
+
+              {podeImprimirRomaneio ? (
+                <button
+                  type="button"
+                  onClick={exportarPdf}
+                  disabled={lancamentos.length === 0}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download className="h-4 w-4 text-red-600" />
+                  Imprimir Romaneio
+                </button>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={() => exportarExpedicaoExcel(lancamentos)}
+                disabled={lancamentos.length === 0}
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#a9d08e] bg-[#e2efda] px-4 py-2.5 text-sm font-semibold text-[#375623] shadow-sm transition hover:bg-[#d6ecd0] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <FileSpreadsheet className="h-4 w-4 text-[#548235]" />
+                Exportar Excel
+              </button>
 
               {possuiPedidoExtraPendente ? (
                 <button
@@ -1125,27 +1159,6 @@ export function ExpedicaoPainel({
                   Existe um ou mais pedidos Extras
                 </button>
               ) : null}
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={exportarPdf}
-                disabled={lancamentos.length === 0}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-              >
-                <Download className="h-4 w-4" />
-                Exportar PDF
-              </button>
-              <button
-                type="button"
-                onClick={() => exportarExpedicaoExcel(lancamentos)}
-                disabled={lancamentos.length === 0}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-              >
-                <FileSpreadsheet className="h-4 w-4" />
-                Exportar Excel
-              </button>
             </div>
           </div>
 

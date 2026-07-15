@@ -360,6 +360,19 @@ Tarefa: Documentar nova regra de negócio no 02-Regras-Negocios.md após altera�
 
 ---
 
+## Pendência conhecida — histórico de migrações
+
+O campo `Pedido.regiaoId` existe no banco de produção, mas
+nenhuma migração no histórico (`prisma/migrations/`) o criou
+oficialmente (provavelmente foi aplicado via `db push` em
+algum momento anterior ao controle de migrações). Isso não
+afeta o funcionamento da aplicação, mas impede rodar
+`prisma migrate dev` do zero sem erro no shadow database
+(falha na migração `20260705220000_device_id_paginacao_indexes`,
+que cria índice em `Pedido.regiaoId`). Resolver com uma migração
+corretiva dedicada, sem misturar com outras tarefas, quando
+houver tempo disponível.
+
 ## Manutenção
 
 Atualize este arquivo quando houver mudanças estruturais:

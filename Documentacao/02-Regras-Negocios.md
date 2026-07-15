@@ -227,7 +227,17 @@ Fluxo legado de estados da visita (componente `VisitaGpsCheckin`, não usado no 
 
 ---
 
-## 9. Relatório de Visita — Linha do Tempo (Raio-X)
+## 9. Relatório de Visita
+
+### Filtros operacionais
+
+- Ordem dos filtros: **Promotor** antes de **Loja**.
+- Cards de região (Diretor): **Todos** → Rio Branco → Manaus.
+- **Loja:** com promotor selecionado, exibe apenas lojas dos registros daquele promotor carregados no período.
+- **Integridade** e **Buscar pedido:** opções limitadas ao que permanece na tela após promotor e loja.
+- Ao mudar promotor, região ou período, loja e filtros dependentes são limpos.
+
+### Linha do Tempo (Raio-X)
 
 No **Relatório de Visita**, ao abrir o detalhe de um pedido (Raio-X), a gestão vê:
 
@@ -267,6 +277,19 @@ Eventos exibidos **em ordem**, do mais antigo ao mais recente:
 
 - **Expedição** só altera pedidos do **dia atual** (fuso da região).
 - **Administrador** e **Diretor** podem alterar independentemente da data.
+
+### Filtros em cascata
+
+- Ordem na tela: Promotor → Loja → Produto → … → Status.
+- **Loja:** com promotor selecionado, lista só lojas dos pedidos daquele promotor no período (transferências avulsas não entram nessa lista).
+- **Produto** e **Status:** opções derivadas dos lançamentos já filtrados na tabela (não listam valores ausentes na tela).
+- Ao trocar o promotor, a loja selecionada é resetada.
+
+### Imprimir Romaneio e exportação
+
+- **Imprimir Romaneio** (PDF) só aparece quando Promotor **e** Loja estão definidos (não “Todos” / “Todas”).
+- **Exportar Excel** permanece disponível com qualquer combinação de filtros, desde que haja dados.
+- Botões ficam na mesma linha do filtro Status, liberando espaço vertical para a tabela.
 
 ### Status dos itens
 

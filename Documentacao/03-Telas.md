@@ -239,10 +239,15 @@ Cards de pendências por região (quando há pedidos aguardando em datas anterio
 
 ### Filtros
 - Data início / fim
-- Região (Diretor: Manaus / Rio Branco / Todas)
-- Promotor, loja, produto, origem
+- Região (Diretor: **Todos** → Rio Branco → Manaus)
+- **Promotor** (antes da loja)
+- **Loja** — com promotor selecionado, lista apenas lojas dos pedidos daquele promotor no período
+- **Produto** — só produtos presentes na tabela com os demais filtros aplicados
+- Origem
 - Tipo de pedido (normal, extra, avulsa)
-- Status (todos, pendente, aprovado, reprovado)
+- **Status** — só status que existem nos lançamentos exibidos (Pendente / Aprovado / Reprovado)
+
+Ao trocar o promotor, a loja selecionada é limpa automaticamente.
 
 ### Tabela de lançamentos
 Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, pedido aprovado, troca solicitada, troca atendida, **qtde avulsa**, **bonificação**, **pedido total**, data, tipo, status.
@@ -254,10 +259,12 @@ Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, p
 - Abrir modal de **Aprovação** (pedidos do portal)
 - Editar **Transferência Avulsa**
 
-### Barra de ações
-- Atualizar filtros
-- Exportar **PDF** (Romaneio de Conferência de Mercadoria — colunas: Cód Produto, Produto, Origem, Estoque, Pedido Solicitado, Corte Pedido, Troca Atendida, Qtde Avulsa, Bonificação, Pedido CISS, Pedido Total; assinaturas: Responsável Expedição e Motorista)
-- Exportar **Excel**
+### Barra de ações (ao lado do filtro Status)
+- **Imprimir Romaneio** — gera o PDF (Romaneio de Conferência de Mercadoria). Visível **somente** quando Promotor **e** Loja estão selecionados (não “Todos” / “Todas”). Visual com destaque vermelho sutil.
+- **Exportar Excel** — sempre visível quando há dados; visual com cores do Excel (verde).
+- Botão rápido **Existe um ou mais pedidos Extras** (quando aplicável)
+
+Colunas do romaneio PDF: Cód Produto, Produto, Origem, Estoque, Pedido Solicitado, Corte Pedido, Troca Atendida, Qtde Avulsa, Bonificação, Pedido CISS, Pedido Total; assinaturas: Responsável Expedição e Motorista.
 
 ### Modais da expedição
 
@@ -317,10 +324,13 @@ Gráficos adaptam cores ao tema claro/escuro.
 
 ### Filtros
 - Data início / fim
-- Região (Diretor)
-- Promotor, loja
-- Integridade da cerca: todos / conforme / não conforme
-- Busca por número do pedido
+- Região (Diretor: **Todos** → Rio Branco → Manaus)
+- **Promotor** (antes da loja)
+- **Loja** — com promotor selecionado, lista apenas lojas dos registros daquele promotor na tela
+- **Integridade** da cerca — só opções presentes nos registros já filtrados (conforme / não conforme)
+- **Buscar pedido** — sugestões limitadas aos registros após promotor e loja
+
+Ao trocar promotor, região ou período, os filtros dependentes são resetados.
 
 ### Cards de totais
 Total de visitas, conformes e inconformes.

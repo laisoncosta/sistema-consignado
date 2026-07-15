@@ -145,7 +145,9 @@ Check-in GPS / vínculo CLT:
 - Fórmulas: Pedido CISS = Pedido Aprovado + Qtde Avulsa | Pedido Total = Pedido Aprovado + Troca Atendida + Qtde Avulsa + Bonificação
 - Troca Atendida e Bonificação **não** entram no Pedido CISS (vai para sistema CISS da empresa)
 - Origem com transferências vinculadas não pode ser excluída
-- Exportar PDF (Romaneio de Conferência) e Excel
+- **Imprimir Romaneio** (PDF): só visível com Promotor e Loja selecionados; botão ao lado do Status
+- **Exportar Excel**: sempre disponível quando há dados; visual verde estilo Excel
+- Filtros em cascata: loja por promotor; produto e status só do que está na tabela (`lib/expedicao.ts` → `construirOpcoesFiltrosExpedicao`)
 - Romaneio PDF: colunas Cód Produto, Produto, Origem, Estoque, Pedido Solicitado, Corte, Troca Atendida, Qtde Avulsa, Bonificação, Pedido CISS, Pedido Total; assinaturas Responsável Expedição e Motorista
 
 ## Dashboard Executivo — /dashboard/inicio
@@ -157,8 +159,9 @@ Check-in GPS / vínculo CLT:
 
 ## Relatório de Visita — /dashboard/gestao/relatorio-visitas
 - Perfis: Admin e Diretor (desktop principal; acessível no mobile com aviso)
-- Cabeçalho com gradiente da marca; Diretor alterna Manaus / Rio Branco / Todas
-- Filtros: data início/fim, região, promotor, loja, integridade da cerca (todos/conforme/inconforme), busca por número do pedido
+- Cabeçalho com gradiente da marca; Diretor: cards de região **Todos** → Rio Branco → Manaus
+- Filtros: data início/fim, região, **promotor (antes da loja)**, loja, integridade, busca por número do pedido
+- Cascata: loja depende do promotor; integridade e busca dependem do que está na tela após promotor/loja
 - Cards de totais: visitas, conformes, inconformes
 - Tabela: pedido (#amigável), data/hora, promotor, loja, tipo, tempo em loja, distância (m), farol integridade
 - **Clicar na linha** abre modal Raio-X (`PedidoRaioXModal`)

@@ -42,6 +42,9 @@ export async function GET(request: Request) {
   const origemId = Number(searchParams.get("origemId") ?? "");
   const tipoPedido = (searchParams.get("tipoPedido") ?? "todos") as TipoPedidoFiltro;
   const status = (searchParams.get("status") ?? "todos") as StatusExpedicaoFiltro;
+  const exportarTodos =
+    searchParams.get("exportar") === "1" ||
+    searchParams.get("exportar") === "true";
   const { pagina, limite, skip, take } = resolverParametrosPaginacao(
     searchParams.get("pagina"),
     searchParams.get("limite"),
@@ -165,11 +168,17 @@ export async function GET(request: Request) {
     });
 
     const total = linhasConsolidadas.length;
-    const lancamentosPaginados = linhasConsolidadas.slice(skip, skip + take);
+    const lancamentosResposta = exportarTodos
+      ? linhasConsolidadas
+      : linhasConsolidadas.slice(skip, skip + take);
 
     return NextResponse.json({
-      lancamentos: lancamentosPaginados,
-      paginacao: montarMetaPaginacao(total, pagina, limite),
+      lancamentos: lancamentosResposta,
+      paginacao: montarMetaPaginacao(
+        total,
+        exportarTodos ? 1 : pagina,
+        exportarTodos ? Math.max(total, 1) : limite,
+      ),
     });
   } catch (error) {
     console.error("Erro ao listar lançamentos da expedição:", error);

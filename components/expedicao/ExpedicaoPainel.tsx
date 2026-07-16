@@ -292,6 +292,7 @@ export function ExpedicaoPainel({
   const [itemAprovacaoId, setItemAprovacaoId] = useState<number | null>(null);
   const [toastAprovacao, setToastAprovacao] = useState<string | null>(null);
   const [filtroRapidoExtra, setFiltroRapidoExtra] = useState(false);
+  const [exportando, setExportando] = useState(false);
   const [pagina, setPagina] = useState(1);
   const [paginacao, setPaginacao] = useState({
     total: 0,
@@ -415,21 +416,47 @@ export function ExpedicaoPainel({
     }
   }, [filtros.dataInicio, filtros.dataFim, filtros.regiao, exibirFiltroRegiao]);
 
-  const carregarTodosLancamentos = useCallback(async () => {
-    setCarregando(true);
-    setErro(null);
-
-    try {
+  const montarParamsLancamentos = useCallback(
+    (opcoes?: { exportarTodos?: boolean; paginaAtual?: number }) => {
+      const exportarTodos = Boolean(opcoes?.exportarTodos);
       const params = new URLSearchParams({
         dataInicio: filtros.dataInicio,
         dataFim: filtros.dataFim,
         tipoPedido: "todos",
         status: "todos",
-        pagina: String(pagina),
-        limite: "30",
         ...(exibirFiltroRegiao && filtros.regiao !== "todos"
           ? { regiao: filtros.regiao }
           : {}),
+      });
+
+      if (exportarTodos) {
+        params.set("exportar", "1");
+      } else {
+        params.set("pagina", String(opcoes?.paginaAtual ?? pagina));
+        params.set("limite", "30");
+      }
+
+      return params;
+    },
+    [
+      filtros.dataInicio,
+      filtros.dataFim,
+      filtros.regiao,
+      exibirFiltroRegiao,
+      pagina,
+    ],
+  );
+
+  const carregarTodosLancamentos = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+
+    try {
+      // Com loja selecionada, busca o período completo para o pedido inteiro
+      // aparecer na tela (e no romaneio/Excel) sem depender da paginação.
+      const params = montarParamsLancamentos({
+        exportarTodos: Boolean(filtros.lojaId),
+        paginaAtual: pagina,
       });
 
       const response = await fetch(`/api/expedicao/lancamentos?${params}`, {
@@ -462,12 +489,30 @@ export function ExpedicaoPainel({
       setCarregando(false);
     }
   }, [
-    filtros.dataInicio,
-    filtros.dataFim,
-    filtros.regiao,
-    exibirFiltroRegiao,
+    montarParamsLancamentos,
+    filtros.lojaId,
     pagina,
   ]);
+
+  const carregarLancamentosCompletos = useCallback(async () => {
+    const params = montarParamsLancamentos({ exportarTodos: true });
+    const response = await fetch(`/api/expedicao/lancamentos?${params}`, {
+      credentials: "include",
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ?? "Não foi possível carregar os lançamentos para exportação.",
+      );
+    }
+
+    const todos = Array.isArray(data.lancamentos)
+      ? (data.lancamentos as LancamentoExpedicao[])
+      : [];
+
+    return filtrarLancamentosExpedicao(todos, filtros);
+  }, [montarParamsLancamentos, filtros]);
 
   const carregarLancamentosOriginais = useCallback(async () => {
     const dataOntem = subtrairDiasIso(dataHoje, 1);
@@ -510,7 +555,7 @@ export function ExpedicaoPainel({
 
   useEffect(() => {
     setPagina(1);
-  }, [filtros.dataInicio, filtros.dataFim, filtros.regiao]);
+  }, [filtros.dataInicio, filtros.dataFim, filtros.regiao, filtros.lojaId]);
 
   useEffect(() => {
     void carregarTodosLancamentos();
@@ -853,30 +898,72 @@ export function ExpedicaoPainel({
     }
   }
 
-  function exportarPdf() {
-    const lojaSelecionada = opcoesFiltros.lojas.find(
-      (l) => l.value === filtros.lojaId,
-    );
-    const promotorSelecionado = opcoesFiltros.promotores.find(
-      (p) => p.value === filtros.promotorId,
-    );
+  async function exportarPdf() {
+    setExportando(true);
+    setErro(null);
 
-    const tipoSelecionado = opcoesFiltros.tiposPedido.find(
-      (tipo) => tipo.value === filtros.tipoPedido,
-    );
+    try {
+      const linhasExportacao = await carregarLancamentosCompletos();
 
-    const marcaPdf = getBrandByRegiao(regiaoNome ?? "");
+      if (linhasExportacao.length === 0) {
+        throw new Error("Nenhum lançamento encontrado para imprimir o romaneio.");
+      }
 
-    exportarExpedicaoPdf(lancamentos, {
-      usuarioNome,
-      lojaNome: lojaSelecionada?.label ?? "Todas",
-      promotorNome: promotorSelecionado?.label ?? "Todos",
-      logoUrl: marcaPdf.logo,
-      tipoNome:
-        filtros.tipoPedido === "todos"
-          ? "Todos"
-          : tipoSelecionado?.label ?? "Todos",
-    });
+      const lojaSelecionada = opcoesFiltros.lojas.find(
+        (l) => l.value === filtros.lojaId,
+      );
+      const promotorSelecionado = opcoesFiltros.promotores.find(
+        (p) => p.value === filtros.promotorId,
+      );
+
+      const tipoSelecionado = opcoesFiltros.tiposPedido.find(
+        (tipo) => tipo.value === filtros.tipoPedido,
+      );
+
+      const marcaPdf = getBrandByRegiao(regiaoNome ?? "");
+
+      exportarExpedicaoPdf(linhasExportacao, {
+        usuarioNome,
+        lojaNome: lojaSelecionada?.label ?? "Todas",
+        promotorNome: promotorSelecionado?.label ?? "Todos",
+        logoUrl: marcaPdf.logo,
+        tipoNome:
+          filtros.tipoPedido === "todos"
+            ? "Todos"
+            : tipoSelecionado?.label ?? "Todos",
+      });
+    } catch (error) {
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível imprimir o romaneio.",
+      );
+    } finally {
+      setExportando(false);
+    }
+  }
+
+  async function exportarExcelCompleto() {
+    setExportando(true);
+    setErro(null);
+
+    try {
+      const linhasExportacao = await carregarLancamentosCompletos();
+
+      if (linhasExportacao.length === 0) {
+        throw new Error("Nenhum lançamento encontrado para exportar.");
+      }
+
+      exportarExpedicaoExcel(linhasExportacao);
+    } catch (error) {
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível exportar o Excel.",
+      );
+    } finally {
+      setExportando(false);
+    }
   }
 
   return (
@@ -1126,22 +1213,30 @@ export function ExpedicaoPainel({
               {podeImprimirRomaneio ? (
                 <button
                   type="button"
-                  onClick={exportarPdf}
-                  disabled={lancamentos.length === 0}
+                  onClick={() => void exportarPdf()}
+                  disabled={lancamentos.length === 0 || exportando || carregando}
                   className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 shadow-sm transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <Download className="h-4 w-4 text-red-600" />
+                  {exportando ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-red-600" />
+                  ) : (
+                    <Download className="h-4 w-4 text-red-600" />
+                  )}
                   Imprimir Romaneio
                 </button>
               ) : null}
 
               <button
                 type="button"
-                onClick={() => exportarExpedicaoExcel(lancamentos)}
-                disabled={lancamentos.length === 0}
+                onClick={() => void exportarExcelCompleto()}
+                disabled={lancamentos.length === 0 || exportando || carregando}
                 className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#a9d08e] bg-[#e2efda] px-4 py-2.5 text-sm font-semibold text-[#375623] shadow-sm transition hover:bg-[#d6ecd0] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <FileSpreadsheet className="h-4 w-4 text-[#548235]" />
+                {exportando ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-[#548235]" />
+                ) : (
+                  <FileSpreadsheet className="h-4 w-4 text-[#548235]" />
+                )}
                 Exportar Excel
               </button>
 
@@ -1312,30 +1407,42 @@ export function ExpedicaoPainel({
             )}
           </div>
 
-          {!carregando && paginacao.total > 0 ? (
+          {!carregando &&
+          (filtros.lojaId ? lancamentosTabela.length > 0 : paginacao.total > 0) ? (
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-2 py-2.5 dark:border-slate-700">
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Página {pagina} de {paginacao.totalPaginas} · {paginacao.total}{" "}
-                lançamento(s)
+                {filtros.lojaId ? (
+                  <>
+                    Pedido completo da loja · {lancamentosTabela.length}{" "}
+                    lançamento(s)
+                  </>
+                ) : (
+                  <>
+                    Página {pagina} de {paginacao.totalPaginas} ·{" "}
+                    {paginacao.total} lançamento(s)
+                  </>
+                )}
               </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={!paginacao.temAnterior || carregando}
-                  onClick={() => setPagina((atual) => Math.max(1, atual - 1))}
-                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                >
-                  Anterior
-                </button>
-                <button
-                  type="button"
-                  disabled={!paginacao.temProxima || carregando}
-                  onClick={() => setPagina((atual) => atual + 1)}
-                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                >
-                  Próxima
-                </button>
-              </div>
+              {!filtros.lojaId ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={!paginacao.temAnterior || carregando}
+                    onClick={() => setPagina((atual) => Math.max(1, atual - 1))}
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    Anterior
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!paginacao.temProxima || carregando}
+                    onClick={() => setPagina((atual) => atual + 1)}
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    Próxima
+                  </button>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </section>

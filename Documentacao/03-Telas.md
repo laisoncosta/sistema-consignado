@@ -238,30 +238,31 @@ Duas rotas, **mesmo painel** (`ExpedicaoPainel`):
 Cards de pendências por região (quando há pedidos aguardando em datas anteriores).
 
 ### Filtros
-- Data início / fim
+- Data início / fim (**independente** da hierarquia do promotor)
 - Região (Diretor: **Todos** → Rio Branco → Manaus)
-- **Promotor** (antes da loja)
-- **Loja** — com promotor selecionado, lista apenas lojas dos pedidos daquele promotor no período
-- **Produto** — só produtos presentes na tabela com os demais filtros aplicados
-- Origem
-- Tipo de pedido (normal, extra, avulsa)
-- **Status** — só status que existem nos lançamentos exibidos (Pendente / Aprovado / Reprovado)
+- **Promotor** — filtro líder da hierarquia
+- **Loja** — só habilitada com promotor escolhido; lista lojas dos pedidos daquele promotor no período
+- **Produto** — só habilitado com promotor escolhido; segue promotor → loja
+- Origem (**independente**)
+- Tipo de pedido — normal, extra, avulsa (**independente**)
+- Status — Pendente / Aprovado / Reprovado (**independente**)
 
-Ao trocar o promotor, a loja selecionada é limpa automaticamente.
+Com **Promotor = Todos**, Loja e Produto ficam em “Todas” / “Todos” e desabilitados. Ao trocar o promotor, Loja e Produto são limpos; ao trocar a loja, Produto é limpo.
 
 ### Tabela de lançamentos
 Colunas principais: produto, loja, estoque, avarias, pedido solicitado, corte, pedido aprovado, troca solicitada, troca atendida, **qtde avulsa**, **bonificação**, **pedido total**, data, tipo, status.
 
 - **Qtde Avulsa:** quantidade de transferência avulsa na linha (zero em pedidos do portal).
 - **Pedido Total:** Pedido Aprovado + Troca Atendida + Qtde Avulsa + Bonificação (conferência física na loja).
+- **Paginação:** lista padrão em páginas; com **loja selecionada**, a tela carrega o pedido completo do período.
 
 **Ações por linha:**
 - Abrir modal de **Aprovação** (pedidos do portal)
 - Editar **Transferência Avulsa**
 
 ### Barra de ações (ao lado do filtro Status)
-- **Imprimir Romaneio** — gera o PDF (Romaneio de Conferência de Mercadoria). Visível **somente** quando Promotor **e** Loja estão selecionados (não “Todos” / “Todas”). Visual com destaque vermelho sutil.
-- **Exportar Excel** — sempre visível quando há dados; visual com cores do Excel (verde).
+- **Imprimir Romaneio** — gera o PDF (Romaneio de Conferência de Mercadoria). Visível **somente** quando Promotor **e** Loja estão selecionados (não “Todos” / “Todas”). Busca o período completo (`exportar=1`) e aplica os filtros. Visual com destaque vermelho sutil.
+- **Exportar Excel** — sempre visível quando há dados; mesma regra de período completo + filtros. Visual com cores do Excel (verde).
 - Botão rápido **Existe um ou mais pedidos Extras** (quando aplicável)
 
 Colunas do romaneio PDF: Cód Produto, Produto, Origem, Estoque, Pedido Solicitado, Corte Pedido, Troca Atendida, Qtde Avulsa, Bonificação, Pedido CISS, Pedido Total; assinaturas: Responsável Expedição e Motorista.

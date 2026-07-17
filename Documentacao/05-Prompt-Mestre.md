@@ -146,9 +146,11 @@ Check-in GPS / vínculo CLT:
 - Fórmulas: Pedido CISS = Pedido Aprovado + Qtde Avulsa | Pedido Total = Pedido Aprovado + Troca Atendida + Qtde Avulsa + Bonificação
 - Troca Atendida e Bonificação **não** entram no Pedido CISS (vai para sistema CISS da empresa)
 - Origem com transferências vinculadas não pode ser excluída
-- **Imprimir Romaneio** (PDF): só visível com Promotor e Loja selecionados; botão ao lado do Status
-- **Exportar Excel**: sempre disponível quando há dados; visual verde estilo Excel
-- Filtros em cascata: loja por promotor; produto e status só do que está na tabela (`lib/expedicao.ts` → `construirOpcoesFiltrosExpedicao`)
+- **Imprimir Romaneio** (PDF): só visível com Promotor e Loja selecionados; botão ao lado do Status; período completo via `exportar=1`
+- **Exportar Excel**: sempre disponível quando há dados; mesma busca completa do período + filtros
+- Filtros: **Promotor** lidera a hierarquia de **Loja** e **Produto** (com Promotor=Todos, Loja/Produto ficam Todos e desabilitados)
+- Independentes do promotor: **Datas**, **Tipo de pedido**, **Origem**, **Status**
+- Com loja selecionada, a tabela mostra o pedido completo do período (sem depender da paginação)
 - Romaneio PDF: colunas Cód Produto, Produto, Origem, Estoque, Pedido Solicitado, Corte, Troca Atendida, Qtde Avulsa, Bonificação, Pedido CISS, Pedido Total; assinaturas Responsável Expedição e Motorista
 
 ## Dashboard Executivo — /dashboard/inicio
@@ -310,7 +312,7 @@ Quando em dúvida sobre regra de negócio ou tela, consulte esses arquivos antes
 | Exclusão e restauração (Diretor) | Sim | `app/api/admin/pedidos/[id]/excluir`, `restaurar` |
 | Linha do tempo do pedido | Sim | `lib/pedido-raio-x.ts` |
 | Dashboard Executivo | Sim | `03-Telas.md` §6 |
-| Expedição (fórmulas, romaneio PDF) | Sim | `02-Regras-Negocios.md` §10 |
+| Expedição (filtros por promotor, romaneio/Excel completo) | Sim | `02-Regras-Negocios.md` §10, `03-Telas.md` §4 |
 | Tema claro/escuro | Sim | `lib/theme-aparencia.ts`, `ThemeProvider` |
 | Mobile Admin/Diretor | Sim | `03-Telas.md` §15 |
 | Branches e ambientes | Sim | Este arquivo |

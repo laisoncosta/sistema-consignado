@@ -279,17 +279,23 @@ Eventos exibidos **em ordem**, do mais antigo ao mais recente:
 - **Expedição** só altera pedidos do **dia atual** (fuso da região).
 - **Administrador** e **Diretor** podem alterar independentemente da data.
 
-### Filtros em cascata
+### Filtros em cascata (liderados pelo Promotor)
 
-- Ordem na tela: Promotor → Loja → Produto → … → Status.
-- **Loja:** com promotor selecionado, lista só lojas dos pedidos daquele promotor no período (transferências avulsas não entram nessa lista).
-- **Produto** e **Status:** opções derivadas dos lançamentos já filtrados na tabela (não listam valores ausentes na tela).
-- Ao trocar o promotor, a loja selecionada é resetada.
+- Ordem na tela: Promotor → Loja → Produto → Origem → Tipo → Status.
+- **Promotor = Todos:** Loja e Produto ficam em “Todos” / “Todas”, **desabilitados**, e só podem ser escolhidos depois que um promotor for selecionado.
+- **Promotor escolhido:**
+  - **Loja:** lista só lojas dos pedidos daquele promotor no período (transferências avulsas não entram nessa lista).
+  - **Produto:** opções da hierarquia promotor → loja (sem depender de origem/tipo/status).
+- Ao trocar o promotor (ou voltar para Todos), **Loja** e **Produto** são resetados.
+- Ao trocar a loja, **Produto** é resetado.
+- **Independentes do promotor** (não seguem a hierarquia): **Datas**, **Tipo de pedido**, **Origem** e **Status**.
 
 ### Imprimir Romaneio e exportação
 
 - **Imprimir Romaneio** (PDF) só aparece quando Promotor **e** Loja estão definidos (não “Todos” / “Todas”).
 - **Exportar Excel** permanece disponível com qualquer combinação de filtros, desde que haja dados.
+- PDF e Excel buscam o período **completo** (`exportar=1` na API) e só então aplicam os filtros — não usam apenas a página atual da tabela.
+- Com loja selecionada, a lista na tela também carrega o pedido completo do período.
 - Botões ficam na mesma linha do filtro Status, liberando espaço vertical para a tabela.
 
 ### Status dos itens

@@ -605,21 +605,29 @@ export function ExpedicaoPainel({
         atual.promotorId &&
         !opcoesFiltros.promotores.some((opcao) => opcao.value === atual.promotorId)
       ) {
-        proximo = { ...proximo, promotorId: "" };
+        proximo = { ...proximo, promotorId: "", lojaId: "", produtoId: "" };
+        alterou = true;
+      }
+
+      // Sem promotor: Loja e Produto voltam para "Todos".
+      if (!proximo.promotorId && (proximo.lojaId || proximo.produtoId)) {
+        proximo = { ...proximo, lojaId: "", produtoId: "" };
         alterou = true;
       }
 
       if (
-        atual.lojaId &&
-        !opcoesFiltros.lojas.some((opcao) => opcao.value === atual.lojaId)
+        proximo.promotorId &&
+        proximo.lojaId &&
+        !opcoesFiltros.lojas.some((opcao) => opcao.value === proximo.lojaId)
       ) {
-        proximo = { ...proximo, lojaId: "" };
+        proximo = { ...proximo, lojaId: "", produtoId: "" };
         alterou = true;
       }
 
       if (
-        atual.produtoId &&
-        !opcoesFiltros.produtos.some((opcao) => opcao.value === atual.produtoId)
+        proximo.promotorId &&
+        proximo.produtoId &&
+        !opcoesFiltros.produtos.some((opcao) => opcao.value === proximo.produtoId)
       ) {
         proximo = { ...proximo, produtoId: "" };
         alterou = true;
@@ -781,8 +789,19 @@ export function ExpedicaoPainel({
       ...atual,
       promotorId,
       lojaId: "",
+      produtoId: "",
     }));
   }
+
+  function handleLojaChange(lojaId: string) {
+    setFiltros((atual) => ({
+      ...atual,
+      lojaId,
+      produtoId: "",
+    }));
+  }
+
+  const promotorSelecionado = Boolean(filtros.promotorId);
 
   function handleCliqueLinha(linha: LancamentoExpedicao) {
     if (linha.avulso && linha.transferenciaId) {
@@ -1114,11 +1133,15 @@ export function ExpedicaoPainel({
                 <span className="font-medium text-slate-700">Loja</span>
                 <select
                   value={filtros.lojaId}
-                  onChange={(e) =>
-                    setFiltros((a) => ({ ...a, lojaId: e.target.value }))
-                  }
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2"
+                  onChange={(e) => handleLojaChange(e.target.value)}
+                  disabled={!promotorSelecionado}
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
                   style={inputRingStyle}
+                  title={
+                    promotorSelecionado
+                      ? undefined
+                      : "Selecione um promotor para filtrar lojas"
+                  }
                 >
                   <option value="">Todas</option>
                   {opcoesFiltros.lojas.map((loja) => (
@@ -1135,8 +1158,14 @@ export function ExpedicaoPainel({
                   onChange={(e) =>
                     setFiltros((a) => ({ ...a, produtoId: e.target.value }))
                   }
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2"
+                  disabled={!promotorSelecionado}
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
                   style={inputRingStyle}
+                  title={
+                    promotorSelecionado
+                      ? undefined
+                      : "Selecione um promotor para filtrar produtos"
+                  }
                 >
                   <option value="">Todos</option>
                   {opcoesFiltros.produtos.map((produto) => (

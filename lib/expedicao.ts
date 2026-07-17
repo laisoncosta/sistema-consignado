@@ -274,37 +274,37 @@ export function construirOpcoesFiltrosExpedicao(
     .sort((a, b) => a.localeCompare(b, "pt-BR"))
     .map((nome) => ({ value: nome, label: nome }));
 
-  // Lojas do promotor selecionado (pedidos dele no período); sem promotor = todas.
-  const linhasParaLojas = filtrosAtivos.promotorId
-    ? lancamentos.filter(
+  // Hierarquia: Loja e Produto só existem com promotor escolhido.
+  // Datas, Tipo, Origem e Status são independentes do promotor.
+  const lojas = filtrosAtivos.promotorId
+    ? coletarOpcoesMapa(
+        lancamentos.filter(
+          (linha) =>
+            !linha.avulso && linha.promotorNome === filtrosAtivos.promotorId,
+        ),
         (linha) =>
-          !linha.avulso && linha.promotorNome === filtrosAtivos.promotorId,
+          linha.codLoja && linha.loja ? [linha.codLoja, linha.loja] : null,
       )
-    : lancamentos;
+    : [];
 
-  const lojas = coletarOpcoesMapa(linhasParaLojas, (linha) =>
-    linha.codLoja && linha.loja ? [linha.codLoja, linha.loja] : null,
-  );
-
-  // Produtos/status: só o que aparece na tela com os demais filtros aplicados.
-  const linhasParaProdutos = filtrarLancamentosExpedicao(lancamentos, {
-    ...filtrosAtivos,
-    produtoId: "",
-  });
-
-  const produtos = coletarOpcoesMapa(linhasParaProdutos, (linha) =>
-    linha.codProduto && linha.produto
-      ? [linha.codProduto, linha.produto]
-      : null,
-  );
-
-  const linhasParaStatus = filtrarLancamentosExpedicao(lancamentos, {
-    ...filtrosAtivos,
-    status: "todos",
-  });
+  const produtos = filtrosAtivos.promotorId
+    ? coletarOpcoesMapa(
+        filtrarLancamentosExpedicao(lancamentos, {
+          ...filtrosAtivos,
+          produtoId: "",
+          origemId: "",
+          tipoPedido: "todos",
+          status: "todos",
+        }),
+        (linha) =>
+          linha.codProduto && linha.produto
+            ? [linha.codProduto, linha.produto]
+            : null,
+      )
+    : [];
 
   const statusPresentes = new Set(
-    linhasParaStatus.map((linha) => valorFiltroStatusExpedicao(linha.status)),
+    lancamentos.map((linha) => valorFiltroStatusExpedicao(linha.status)),
   );
 
   const status: OpcaoFiltroDinamico[] = (

@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 
 import { MapaAuditoriaPedido } from "@/components/admin/MapaAuditoriaPedido";
 import { apiFetch } from "@/lib/api-client";
@@ -140,9 +141,9 @@ export function PedidoRaioXModal({
     return null;
   }
 
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 px-4 py-6 backdrop-blur-sm"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/50 px-4 py-6 backdrop-blur-sm"
       onClick={onFechar}
       role="presentation"
     >
@@ -427,4 +428,10 @@ export function PedidoRaioXModal({
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return modal;
+  }
+
+  return createPortal(modal, document.body);
 }
